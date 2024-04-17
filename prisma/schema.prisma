@@ -49,7 +49,7 @@ model Foto {
 
 model Carrinho {
   id           Int       @id @default(autoincrement())
-  fechadoEm    DateTime  @map("fechado_em")
+  fechadoEm    DateTime? @map("fechado_em")
   statusAberto Boolean   @map("status_aberto")
   usuarioId    Int       @map("usuario_id")
   produtos     Produto[]

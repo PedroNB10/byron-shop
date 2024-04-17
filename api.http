@@ -1,12 +1,16 @@
-#### POST /usuarios ==> Cria um novo usuário
+#### POST http://localhost:8080/usuarios ==> Cria um novo usuário
 POST http://localhost:8080/usuarios
 Content-Type: application/json
 
 {
   "data": {
-    "email": "pedro@email.com",
+    "email": "Eduardo@email.com",
     "senha": "senha123",
-    "nome": "Fulano de Tal",
-    "cpf": "12342678294"
+    "nome": "Eduardo",
+    "cpf": "22342678234"
   }
 }
+
+#### Get http://localhost:8080/usuarios/idDoUsuario ==> Busca por um usuário por meio do seu id e retorna todos os carrinhos os que foram fechados e os que estão abertos
+
+GET http://localhost:8080/usuarios/1
