@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id    Int    @id @default(autoincrement())
+  email String @unique @db.VarChar(100)
+  senha String @db.VarChar(100)
+  nome  String @db.VarChar(70)
+  cpf   String @unique @db.VarChar(11)
+
+  @@map("usuario")
+}
+
+model Produto {
+  id                   Int        @id @default(autoincrement())
+  nome                 String     @db.VarChar(100)
+  descricao            String     @db.VarChar(4000)
+  preco                Decimal    @db.Decimal(10, 2)
+  categoria            String     @db.VarChar(50)
+  quantidadeDisponivel Int        @map("quantidade_disponivel")
+  carrinhos            Carrinho[]
+
+  fotos Foto[]
+
+  @@map("produto")
+}
+
+model Foto {
+  id        Int     @id @default(autoincrement())
+  url       String  @db.VarChar(2048)
+  produtoId Int
+  produto   Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@map("foto")
+}
+
+model Carrinho {
+  id           Int       @id @default(autoincrement())
+  fechadoEm    DateTime  @map("fechado_em")
+  statusAberto Boolean   @map("status_aberto")
+  usuarioId    Int       @map("usuario_id")
+  produtos     Produto[]
+
+  @@map("carrinho")
+}

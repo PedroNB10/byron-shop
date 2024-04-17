@@ -1,0 +1,19 @@
+{
+  "name": "byron-shop",
+  "version": "1.0.0",
+  "description": "Projeto final da capacitação backend.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "Pedro Nogueira",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.12.1",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.0",
+    "prisma": "^5.12.1"
+  },
+  "type": "module"
+}
