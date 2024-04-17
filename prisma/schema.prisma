@@ -14,11 +14,12 @@ datasource db {
 }
 
 model Usuario {
-  id    Int    @id @default(autoincrement())
-  email String @unique @db.VarChar(100)
-  senha String @db.VarChar(100)
-  nome  String @db.VarChar(70)
-  cpf   String @unique @db.VarChar(11)
+  id        Int        @id @default(autoincrement())
+  email     String     @unique @db.VarChar(100)
+  senha     String     @db.VarChar(100)
+  nome      String     @db.VarChar(70)
+  cpf       String     @unique @db.VarChar(11)
+  carrinhos Carrinho[]
 
   @@map("usuario")
 }
@@ -52,6 +53,7 @@ model Carrinho {
   statusAberto Boolean   @map("status_aberto")
   usuarioId    Int       @map("usuario_id")
   produtos     Produto[]
+  Usuario      Usuario   @relation(fields: [usuarioId], references: [id])
 
   @@map("carrinho")
 }
