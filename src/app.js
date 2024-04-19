@@ -1,7 +1,9 @@
 import express from "express";
 
 import exampleRouter from "./routes/example.routes.js";
+import produtosRouter from "./routes/produtos.routes.js";
 import usuarioRouter from "./routes/usuario.routes.js";
+import carrinhoRouter from "./routes/carrinho.routes.js";
 
 const app = express();
 const port = 8080;
@@ -16,6 +18,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/usuarios", usuarioRouter);
+app.use("/produtos", produtosRouter);
+app.use("/carrinho", carrinhoRouter);
 
 app.use("/", exampleRouter);
 

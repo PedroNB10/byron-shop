@@ -14,3 +14,38 @@ Content-Type: application/json
 #### Get http://localhost:8080/usuarios/idDoUsuario ==> Busca por um usuário por meio do seu id e retorna todos os carrinhos os que foram fechados e os que estão abertos
 
 GET http://localhost:8080/usuarios/1
+
+
+#### POST http://localhost:8080/usuarios/idDoUsuario/carrinhos ==> Cria um novo carrinho para um usuário
+
+
+#### POST http://localhost:8080/produtos ==> Cria um novo produto
+POST http://localhost:8080/produtos
+Content-Type: application/json
+
+{
+  "data": {
+    "nome": "Caneca Byron",
+    "descricao": "Caneca muito linda",
+    "preco": 90.0,
+    "categoria": "objeto",
+    "quantidadeDisponivel": 30
+  }
+}
+
+#### GET http://localhost:8080/produtos ==> Busca todos os produtos cadastrados
+
+GET http://localhost:8080/produtos
+
+#### POST http://localhost:8080/produtos/carrinho ==> Adiciona um produto a um carrinho
+
+POST http://localhost:8080/carrinho
+Content-Type: application/json
+
+{
+  "data": {
+    "produtoId": 4,
+    "usuarioId": 2,
+    "quantidade": 4
+  }
+}

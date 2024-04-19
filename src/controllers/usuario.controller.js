@@ -82,7 +82,7 @@ export const criarUsuario = async (req, res) => {
     res.json({
       data: usuario,
       token: token,
-      msg: "Categoria criada com sucesso",
+      msg: "Usuário criado com sucesso",
     });
   } catch {
     res.status(400).json({

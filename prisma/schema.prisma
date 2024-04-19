@@ -24,18 +24,13 @@ model Usuario {
   @@map("usuario")
 }
 
-model Produto {
-  id                   Int        @id @default(autoincrement())
-  nome                 String     @db.VarChar(100)
-  descricao            String     @db.VarChar(4000)
-  preco                Decimal    @db.Decimal(10, 2)
-  categoria            String     @db.VarChar(50)
-  quantidadeDisponivel Int        @map("quantidade_disponivel")
-  carrinhos            Carrinho[]
+model Estoque {
+  id                   Int      @id @unique @default(autoincrement())
+  quantidadeDisponivel Int      @map("quantidade_disponivel") @db.Int
+  quantidadePedida     Int      @default(0) @map("quantidade_pedida") @db.Int
+  Produto              Produto?
 
-  fotos Foto[]
-
-  @@map("produto")
+  @@map("estoque")
 }
 
 model Foto {
@@ -48,12 +43,37 @@ model Foto {
 }
 
 model Carrinho {
-  id           Int       @id @default(autoincrement())
-  fechadoEm    DateTime? @map("fechado_em")
-  statusAberto Boolean   @map("status_aberto")
-  usuarioId    Int       @map("usuario_id")
-  produtos     Produto[]
-  Usuario      Usuario   @relation(fields: [usuarioId], references: [id])
+  id            Int            @id @default(autoincrement())
+  fechadoEm     DateTime?      @map("fechado_em")
+  statusAberto  Boolean        @map("status_aberto")
+  usuarioId     Int            @map("usuario_id")
+  Usuario       Usuario        @relation(fields: [usuarioId], references: [id])
+  itensCarrinho ItemCarrinho[]
 
   @@map("carrinho")
+}
+
+model Produto {
+  id           Int            @id @unique @default(autoincrement())
+  nome         String         @db.VarChar(100)
+  descricao    String         @db.VarChar(4000)
+  preco        Decimal        @db.Decimal(10, 2)
+  categoria    String         @db.VarChar(50)
+  fotos        Foto[]
+  estoqueId    Int            @unique @map("estoque_id")
+  Estoque      Estoque        @relation(fields: [estoqueId], references: [id])
+  ItemCarrinho ItemCarrinho[]
+
+  @@map("produto")
+}
+
+model ItemCarrinho {
+  id         Int      @id @default(autoincrement())
+  quantidade Int
+  produtoId  Int      @map("produto_id")
+  carrinhoId Int      @map("carrinho_id")
+  Carrinho   Carrinho @relation(fields: [carrinhoId], references: [id])
+  produto    Produto  @relation(fields: [produtoId], references: [id])
+
+  @@map("item_carrinho")
 }
