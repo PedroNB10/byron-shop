@@ -50,8 +50,6 @@ export const removerProdutoDoCarrinho = async (req, res) => {
     });
     return;
   }
-  console.log("carrinho aberto:");
-  console.log(carrinho.itensCarrinho);
 
   const estoque = await estoqueController.getEstoquePorProdutoId(produtoId);
 
@@ -80,8 +78,7 @@ export const removerProdutoDoCarrinho = async (req, res) => {
 
     await estoqueController.adicionarItemEstoque(estoque, produtoId);
 
-    res.json({
-      data: "carrinho",
+    res.status(200).json({
       msg: "Produto removido do carrinho com sucesso",
     });
     return;
@@ -95,8 +92,7 @@ export const removerProdutoDoCarrinho = async (req, res) => {
 
     await estoqueController.adicionarItemEstoque(estoque, produtoId);
 
-    res.json({
-      data: "carrinho",
+    res.status(200).json({
       msg: "Produto removido do carrinho com sucesso",
     });
     return;
@@ -165,8 +161,7 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
 
     console.log("carrinho criado com itemCarrinho AAAAAAAa");
 
-    res.json({
-      data: "carrinho",
+    res.status(200).json({
       msg: "Produto adicionado ao carrinho com sucesso",
     });
     return;
@@ -218,8 +213,7 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
     }
   }
 
-  res.json({
-    data: "itemCarrinho",
+  res.status(200).json({
     msg: "Produto adicionado ao carrinho com sucesso",
   });
 };

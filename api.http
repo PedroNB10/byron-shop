@@ -4,10 +4,10 @@ Content-Type: application/json
 
 {
   "data": {
-    "email": "eduardo@email.com",
+    "email": "Giovana@email.com",
     "senha": "senha123",
-    "nome": "Eduardo Pereira",
-    "cpf": "21342678214"
+    "nome": "Giovana Silva",
+    "cpf": "21342678245"
   }
 }
 
@@ -25,11 +25,11 @@ Content-Type: application/json
 
 {
   "data": {
-    "nome": "Par de Tenis byron",
-    "descricao": "Tenis estiloso",
-    "preco": 50.99,
-    "categoria": "calçados",
-    "quantidadeDisponivel": 10
+    "nome": "Boné byron",
+    "descricao": "Boné top",
+    "preco": 69.99,
+    "categoria": "roupas",
+    "quantidadeDisponivel": 15
   }
 }
 

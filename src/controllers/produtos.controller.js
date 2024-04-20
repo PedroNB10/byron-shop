@@ -38,7 +38,11 @@ export const criarProduto = async (req, res) => {
 };
 
 export const getProdutos = async (req, res) => {
-  const produtos = await prisma.produto.findMany();
+  const produtos = await prisma.produto.findMany({
+    include: {
+      Estoque: true,
+    },
+  });
 
   res.json({
     data: produtos,
