@@ -45,7 +45,7 @@ Content-Type: application/json
 {
   "data": {
     "produtoId": 3,
-    "usuarioId": 2
+    "usuarioId": 1
  
   }
 }

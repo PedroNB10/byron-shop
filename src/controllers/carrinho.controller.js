@@ -8,16 +8,10 @@ import * as estoqueController from "./estoques.controller.js";
 
 export const removerProdutoDoCarrinho = async (req, res) => {
   const data = req.params;
-  console.log(data);
-  console.log("remover produto do carrinho");
-
   let { produtoId, usuarioId } = data;
 
   produtoId = parseInt(produtoId);
   usuarioId = parseInt(usuarioId);
-
-  console.log(produtoId);
-  console.log(usuarioId);
 
   const usuario = await usuarioController.getUsuarioPorId(usuarioId);
 
@@ -101,8 +95,6 @@ export const removerProdutoDoCarrinho = async (req, res) => {
 
 export const adicionarProdutoAoCarrinho = async (req, res) => {
   const data = req.body.data;
-  console.log(data);
-
   const { produtoId, usuarioId } = data;
 
   const usuario = await usuarioController.getUsuarioPorId(usuarioId);
@@ -122,9 +114,6 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
     });
     return;
   }
-
-  console.log(usuario);
-  console.log("items no carrinho");
 
   const estoque = await estoqueController.getEstoquePorProdutoId(produtoId);
 
@@ -159,8 +148,6 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
 
     await estoqueController.removerItemEstoque(estoque, produtoId);
 
-    console.log("carrinho criado com itemCarrinho AAAAAAAa");
-
     res.status(200).json({
       msg: "Produto adicionado ao carrinho com sucesso",
     });
@@ -169,9 +156,6 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
     const carrinho = await prisma.carrinho.findFirst({
       where: { statusAberto: true, usuarioId: usuarioId },
     });
-    console.log("carrinho aberto:");
-    console.log(carrinho);
-
     //procurando o item correspondente ao produto no carrinho
     const itemCarrinho = await prisma.itemCarrinho.findFirst({
       where: { carrinhoId: carrinho.id, produtoId: produtoId },
