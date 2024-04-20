@@ -2,6 +2,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+import * as produtosController from "./produtos.controller.js";
+import * as usuarioController from "./usuario.controller.js";
+import * as estoqueController from "./estoques.controller.js";
+
 export const removerProdutoDoCarrinho = async (req, res) => {
   const data = req.params;
   console.log(data);
@@ -15,20 +19,7 @@ export const removerProdutoDoCarrinho = async (req, res) => {
   console.log(produtoId);
   console.log(usuarioId);
 
-  const usuario = await prisma.usuario.findUnique({
-    where: { id: usuarioId },
-    include: {
-      carrinhos: {
-        include: {
-          itensCarrinho: {
-            include: {
-              produto: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  const usuario = await usuarioController.getUsuarioPorId(usuarioId);
 
   if (!usuario) {
     res.status(404).json({
@@ -37,9 +28,7 @@ export const removerProdutoDoCarrinho = async (req, res) => {
     return;
   }
 
-  const produto = await prisma.produto.findUnique({
-    where: { id: produtoId },
-  });
+  const produto = await produtosController.getProdutoPorId(produtoId);
 
   if (!produto) {
     res.status(404).json({
@@ -64,9 +53,7 @@ export const removerProdutoDoCarrinho = async (req, res) => {
   console.log("carrinho aberto:");
   console.log(carrinho.itensCarrinho);
 
-  const estoque = await prisma.estoque.findFirst({
-    where: { id: produtoId },
-  });
+  const estoque = await estoqueController.getEstoquePorProdutoId(produtoId);
 
   const itemCarrinho = await prisma.itemCarrinho.findFirst({
     where: { carrinhoId: carrinho.id, produtoId: produtoId },
@@ -91,12 +78,7 @@ export const removerProdutoDoCarrinho = async (req, res) => {
       where: { id: itemCarrinho.id },
     });
 
-    await prisma.estoque.update({
-      where: { id: produtoId },
-      data: {
-        quantidadeDisponivel: estoque.quantidadeDisponivel + 1,
-      },
-    });
+    await estoqueController.adicionarItemEstoque(estoque, produtoId);
 
     res.json({
       data: "carrinho",
@@ -111,12 +93,7 @@ export const removerProdutoDoCarrinho = async (req, res) => {
       },
     });
 
-    await prisma.estoque.update({
-      where: { id: produtoId },
-      data: {
-        quantidadeDisponivel: estoque.quantidadeDisponivel + 1,
-      },
-    });
+    await estoqueController.adicionarItemEstoque(estoque, produtoId);
 
     res.json({
       data: "carrinho",
@@ -132,20 +109,7 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
 
   const { produtoId, usuarioId } = data;
 
-  const usuario = await prisma.usuario.findUnique({
-    where: { id: usuarioId },
-    include: {
-      carrinhos: {
-        include: {
-          itensCarrinho: {
-            include: {
-              produto: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  const usuario = await usuarioController.getUsuarioPorId(usuarioId);
 
   if (!usuario) {
     res.status(404).json({
@@ -154,9 +118,7 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
     return;
   }
 
-  const produto = await prisma.produto.findUnique({
-    where: { id: produtoId },
-  });
+  const produto = await produtosController.getProdutoPorId(produtoId);
 
   if (!produto) {
     res.status(404).json({
@@ -168,9 +130,7 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
   console.log(usuario);
   console.log("items no carrinho");
 
-  const estoque = await prisma.estoque.findFirst({
-    where: { id: produtoId },
-  });
+  const estoque = await estoqueController.getEstoquePorProdutoId(produtoId);
 
   if (estoque.quantidadeDisponivel === 0) {
     res.status(400).json({
@@ -201,13 +161,7 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
       return;
     }
 
-    // atualização do estoque
-    await prisma.estoque.update({
-      where: { id: produtoId },
-      data: {
-        quantidadeDisponivel: estoque.quantidadeDisponivel - 1,
-      },
-    });
+    await estoqueController.removerItemEstoque(estoque, produtoId);
 
     console.log("carrinho criado com itemCarrinho AAAAAAAa");
 
@@ -215,6 +169,7 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
       data: "carrinho",
       msg: "Produto adicionado ao carrinho com sucesso",
     });
+    return;
   } else {
     const carrinho = await prisma.carrinho.findFirst({
       where: { statusAberto: true, usuarioId: usuarioId },
@@ -236,12 +191,7 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
           },
         });
 
-        await prisma.estoque.update({
-          where: { id: produtoId },
-          data: {
-            quantidadeDisponivel: estoque.quantidadeDisponivel - 1,
-          },
-        });
+        await estoqueController.removerItemEstoque(estoque, produtoId);
       } else {
         res.status(400).json({
           msg: "Quantidade insuficiente em estoque",
@@ -255,21 +205,16 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
         });
         return;
       }
-
+      // arrumar a quantidade aqui
       await prisma.itemCarrinho.create({
         data: {
           carrinhoId: carrinho.id,
           produtoId: produtoId,
-          quantidade: estoque.quantidadeDisponivel - 1,
+          quantidade: 1,
         },
       });
-      // atualizando o estoque
-      await prisma.estoque.update({
-        where: { id: produtoId },
-        data: {
-          quantidadeDisponivel: estoque.quantidadeDisponivel - 1,
-        },
-      });
+
+      await estoqueController.removerItemEstoque(estoque, produtoId);
     }
   }
 

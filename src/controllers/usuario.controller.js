@@ -15,27 +15,47 @@ export const getUsuarios = async (req, res) => {
   });
 };
 
-export const getUsuarioPorId = async (req, res) => {
-  // console.log(req.params.usuarioId);
-  const usuario = await prisma.usuario.findFirst({
-    where: {
-      id: parseInt(req.params.usuarioId),
-    },
+// função para pegar o usuário por json
+// export const getUsuarioPorId = async (req, res) => {
+//   // console.log(req.params.usuarioId);
+//   const usuario = await prisma.usuario.findFirst({
+//     where: {
+//       id: parseInt(req.params.usuarioId),
+//     },
+//     include: {
+//       carrinhos: true,
+//     },
+//   });
+
+//   if (!usuario) {
+//     res.status(404).json({
+//       msg: "Usuário não encontrado",
+//     });
+//     return;
+//   }
+
+//   res.json({
+//     data: usuario,
+//   });
+// };
+
+export const getUsuarioPorId = async (usuarioId) => {
+  const usuario = await prisma.usuario.findUnique({
+    where: { id: usuarioId },
     include: {
-      carrinhos: true,
+      carrinhos: {
+        include: {
+          itensCarrinho: {
+            include: {
+              produto: true,
+            },
+          },
+        },
+      },
     },
   });
 
-  if (!usuario) {
-    res.status(404).json({
-      msg: "Usuário não encontrado",
-    });
-    return;
-  }
-
-  res.json({
-    data: usuario,
-  });
+  return usuario;
 };
 
 export const criarUsuario = async (req, res) => {

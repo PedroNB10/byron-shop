@@ -44,6 +44,14 @@ export const getProdutos = async (req, res) => {
     data: produtos,
   });
 };
+
+export const getProdutoPorId = async (produtoId) => {
+  const produto = await prisma.produto.findUnique({
+    where: { id: produtoId },
+  });
+
+  return produto;
+};
 // export const adicionarProdutoAoCarrinho = async (req, res) => {
 //   console.log(req.body.data);
 
