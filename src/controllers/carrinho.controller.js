@@ -2,11 +2,18 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const adicionarProdutoAoCarrinho = async (req, res) => {
-  const data = req.body.data;
+export const removerProdutoDoCarrinho = async (req, res) => {
+  const data = req.params;
   console.log(data);
+  console.log("remover produto do carrinho");
 
-  const { produtoId, usuarioId, quantidade } = data;
+  let { produtoId, usuarioId } = data;
+
+  produtoId = parseInt(produtoId);
+  usuarioId = parseInt(usuarioId);
+
+  console.log(produtoId);
+  console.log(usuarioId);
 
   const usuario = await prisma.usuario.findUnique({
     where: { id: usuarioId },
@@ -30,40 +37,183 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
     return;
   }
 
+  const produto = await prisma.produto.findUnique({
+    where: { id: produtoId },
+  });
+
+  if (!produto) {
+    res.status(404).json({
+      msg: "Produto não encontrado",
+    });
+    return;
+  }
+
+  const carrinho = await prisma.carrinho.findFirst({
+    where: { statusAberto: true, usuarioId: usuarioId },
+    include: {
+      itensCarrinho: true,
+    },
+  });
+
+  if (!carrinho) {
+    res.status(404).json({
+      msg: "Carrinho não encontrado",
+    });
+    return;
+  }
+  console.log("carrinho aberto:");
+  console.log(carrinho.itensCarrinho);
+
+  const estoque = await prisma.estoque.findFirst({
+    where: { id: produtoId },
+  });
+
+  const itemCarrinho = await prisma.itemCarrinho.findFirst({
+    where: { carrinhoId: carrinho.id, produtoId: produtoId },
+  });
+
+  if (!itemCarrinho) {
+    res.status(404).json({
+      msg: "Produto não encontrado no carrinho",
+    });
+    return;
+  }
+
+  if (itemCarrinho.quantidade === 0) {
+    res.status(404).json({
+      msg: "Produto não encontrado no carrinho",
+    });
+    return;
+  }
+
+  if (itemCarrinho.quantidade === 1) {
+    await prisma.itemCarrinho.delete({
+      where: { id: itemCarrinho.id },
+    });
+
+    await prisma.estoque.update({
+      where: { id: produtoId },
+      data: {
+        quantidadeDisponivel: estoque.quantidadeDisponivel + 1,
+      },
+    });
+
+    res.json({
+      data: "carrinho",
+      msg: "Produto removido do carrinho com sucesso",
+    });
+    return;
+  } else {
+    await prisma.itemCarrinho.update({
+      where: { id: itemCarrinho.id },
+      data: {
+        quantidade: itemCarrinho.quantidade - 1,
+      },
+    });
+
+    await prisma.estoque.update({
+      where: { id: produtoId },
+      data: {
+        quantidadeDisponivel: estoque.quantidadeDisponivel + 1,
+      },
+    });
+
+    res.json({
+      data: "carrinho",
+      msg: "Produto removido do carrinho com sucesso",
+    });
+    return;
+  }
+};
+
+export const adicionarProdutoAoCarrinho = async (req, res) => {
+  const data = req.body.data;
+  console.log(data);
+
+  const { produtoId, usuarioId } = data;
+
+  const usuario = await prisma.usuario.findUnique({
+    where: { id: usuarioId },
+    include: {
+      carrinhos: {
+        include: {
+          itensCarrinho: {
+            include: {
+              produto: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!usuario) {
+    res.status(404).json({
+      msg: "Usuário não encontrado",
+    });
+    return;
+  }
+
+  const produto = await prisma.produto.findUnique({
+    where: { id: produtoId },
+  });
+
+  if (!produto) {
+    res.status(404).json({
+      msg: "Produto não encontrado",
+    });
+    return;
+  }
+
   console.log(usuario);
   console.log("items no carrinho");
-  //   console.log(usuario.carrinhos[0].itensCarrinho);
+
+  const estoque = await prisma.estoque.findFirst({
+    where: { id: produtoId },
+  });
+
+  if (estoque.quantidadeDisponivel === 0) {
+    res.status(400).json({
+      msg: "Quantidade insuficiente em estoque",
+    });
+    return;
+  }
 
   if (usuario.carrinhos.length === 0) {
-    const carrinho = await prisma.carrinho.create({
+    // criação do primeiro carrinho
+    await prisma.carrinho.create({
       data: {
         statusAberto: true,
         usuarioId: usuarioId,
         itensCarrinho: {
           create: {
             produtoId: produtoId,
-            quantidade: quantidade,
+            quantidade: 1,
           },
         },
       },
     });
 
-    const estoque = await prisma.estoque.findFirst({
-      where: { id: produtoId },
-    });
-
-    if (estoque.quantidadeDisponivel < quantidade) {
+    if (estoque.quantidadeDisponivel === 0) {
       res.status(400).json({
         msg: "Quantidade insuficiente em estoque",
       });
       return;
     }
 
-    const novoEstoque = await prisma.estoque.update({
+    // atualização do estoque
+    await prisma.estoque.update({
       where: { id: produtoId },
       data: {
-        quantidadeDisponivel: estoque.quantidadeDisponivel - quantidade,
+        quantidadeDisponivel: estoque.quantidadeDisponivel - 1,
       },
+    });
+
+    console.log("carrinho criado com itemCarrinho AAAAAAAa");
+
+    res.json({
+      data: "carrinho",
+      msg: "Produto adicionado ao carrinho com sucesso",
     });
   } else {
     const carrinho = await prisma.carrinho.findFirst({
@@ -72,62 +222,59 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
     console.log("carrinho aberto:");
     console.log(carrinho);
 
-    const estoque = await prisma.estoque.findFirst({
-      where: { id: produtoId },
-    });
-
+    //procurando o item correspondente ao produto no carrinho
     const itemCarrinho = await prisma.itemCarrinho.findFirst({
       where: { carrinhoId: carrinho.id, produtoId: produtoId },
     });
 
     if (itemCarrinho) {
-      await prisma.itemCarrinho.update({
-        where: { id: itemCarrinho.id },
-        data: {
-          quantidade: itemCarrinho.quantidade + quantidade,
-        },
-      });
+      if (estoque.quantidadeDisponivel > 0) {
+        await prisma.itemCarrinho.update({
+          where: { id: itemCarrinho.id },
+          data: {
+            quantidade: itemCarrinho.quantidade + 1,
+          },
+        });
 
-      if (estoque.quantidadeDisponivel < quantidade) {
+        await prisma.estoque.update({
+          where: { id: produtoId },
+          data: {
+            quantidadeDisponivel: estoque.quantidadeDisponivel - 1,
+          },
+        });
+      } else {
+        res.status(400).json({
+          msg: "Quantidade insuficiente em estoque",
+        });
+        return;
+      }
+    } else {
+      if (estoque.quantidadeDisponivel === 0) {
         res.status(400).json({
           msg: "Quantidade insuficiente em estoque",
         });
         return;
       }
 
-      const novoEstoque = await prisma.estoque.update({
-        where: { id: produtoId },
-        data: {
-          quantidadeDisponivel: estoque.quantidadeDisponivel - quantidade,
-        },
-      });
-    } else {
       await prisma.itemCarrinho.create({
         data: {
           carrinhoId: carrinho.id,
           produtoId: produtoId,
-          quantidade: quantidade,
+          quantidade: estoque.quantidadeDisponivel - 1,
         },
       });
-
-      if (estoque.quantidadeDisponivel < quantidade) {
-        res.status(400).json({
-          msg: "Quantidade insuficiente em estoque",
-        });
-        return;
-      }
-
-      const novoEstoque = await prisma.estoque.update({
+      // atualizando o estoque
+      await prisma.estoque.update({
         where: { id: produtoId },
         data: {
-          quantidadeDisponivel: estoque.quantidadeDisponivel - quantidade,
+          quantidadeDisponivel: estoque.quantidadeDisponivel - 1,
         },
       });
     }
   }
 
   res.json({
-    data: "carrinho",
+    data: "itemCarrinho",
     msg: "Produto adicionado ao carrinho com sucesso",
   });
 };
