@@ -53,4 +53,4 @@ Content-Type: application/json
 #### DELETE http://localhost:8080/carrinho/idDoCarrinho ==> Deleta um produto de um carrinho
 
 ### DELETE http://localhost:8080/carrinho/remover/usuarioId/produtoId
-DELETE http://localhost:8080/carrinho/2/3
+DELETE http://localhost:8080/carrinho/1/3

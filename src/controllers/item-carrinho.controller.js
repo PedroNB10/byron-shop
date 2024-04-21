@@ -3,9 +3,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const getItemCarrinho = async (carrinhoId, produtoId) => {
-  await prisma.itemCarrinho.findFirst({
+  const itemCarrinho = await prisma.itemCarrinho.findFirst({
     where: { carrinhoId: carrinhoId, produtoId: produtoId },
   });
+
+  return itemCarrinho;
 };
 
 export const criarInstanciaItemCarrinho = async (
