@@ -38,11 +38,23 @@ export const criarProduto = async (req, res) => {
 };
 
 export const getProdutos = async (req, res) => {
-  const produtos = await prisma.produto.findMany();
+  const produtos = await prisma.produto.findMany({
+    include: {
+      Estoque: true,
+    },
+  });
 
   res.json({
     data: produtos,
   });
+};
+
+export const getProdutoPorId = async (produtoId) => {
+  const produto = await prisma.produto.findUnique({
+    where: { id: produtoId },
+  });
+
+  return produto;
 };
 // export const adicionarProdutoAoCarrinho = async (req, res) => {
 //   console.log(req.body.data);

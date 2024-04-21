@@ -27,7 +27,6 @@ model Usuario {
 model Estoque {
   id                   Int      @id @unique @default(autoincrement())
   quantidadeDisponivel Int      @map("quantidade_disponivel") @db.Int
-  quantidadePedida     Int      @default(0) @map("quantidade_pedida") @db.Int
   Produto              Produto?
 
   @@map("estoque")

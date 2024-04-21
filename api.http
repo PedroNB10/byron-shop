@@ -4,10 +4,10 @@ Content-Type: application/json
 
 {
   "data": {
-    "email": "Eduardo@email.com",
+    "email": "Giovana@email.com",
     "senha": "senha123",
-    "nome": "Eduardo",
-    "cpf": "22342678234"
+    "nome": "Giovana Silva",
+    "cpf": "21342678245"
   }
 }
 
@@ -25,11 +25,11 @@ Content-Type: application/json
 
 {
   "data": {
-    "nome": "Caneca Byron",
-    "descricao": "Caneca muito linda",
-    "preco": 90.0,
-    "categoria": "objeto",
-    "quantidadeDisponivel": 30
+    "nome": "Boné byron",
+    "descricao": "Boné top",
+    "preco": 69.99,
+    "categoria": "roupas",
+    "quantidadeDisponivel": 15
   }
 }
 
@@ -44,8 +44,13 @@ Content-Type: application/json
 
 {
   "data": {
-    "produtoId": 4,
-    "usuarioId": 2,
-    "quantidade": 4
+    "produtoId": 3,
+    "usuarioId": 1
+ 
   }
 }
+
+#### DELETE http://localhost:8080/carrinho/idDoCarrinho ==> Deleta um produto de um carrinho
+
+### DELETE http://localhost:8080/carrinho/remover/usuarioId/produtoId
+DELETE http://localhost:8080/carrinho/1/3
