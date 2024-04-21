@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { gerarToken } from "../utils/jwt.js";
-
+import * as regex from "../utils/validar-cadastro.js";
 const prisma = new PrismaClient();
 
 export const getUsuarios = async (req, res) => {
@@ -83,6 +83,27 @@ export const criarUsuario = async (req, res) => {
   if (usuarioExistente) {
     res.status(400).json({
       msg: "Existe um usuário com o mesmo email ou cpf cadastrado",
+    });
+    return;
+  }
+
+  if (!regex.validarEmail(data.email)) {
+    res.status(400).json({
+      msg: "Digite um e-mail válido!",
+    });
+    return;
+  }
+
+  if (!regex.validarSenha(data.senha)) {
+    res.status(400).json({
+      msg: "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial",
+    });
+    return;
+  }
+
+  if (!regex.validarCPF(data.cpf)) {
+    res.status(400).json({
+      msg: "O CPF deve conter 11 dígitos",
     });
     return;
   }
