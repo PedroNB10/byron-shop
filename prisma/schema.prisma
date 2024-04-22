@@ -60,7 +60,7 @@ model Produto {
   categoria    String         @db.VarChar(50)
   fotos        Foto[]
   estoqueId    Int            @unique @map("estoque_id")
-  Estoque      Estoque        @relation(fields: [estoqueId], references: [id])
+  Estoque      Estoque        @relation(fields: [estoqueId], references: [id], onDelete: Cascade)
   ItemCarrinho ItemCarrinho[]
 
   @@map("produto")

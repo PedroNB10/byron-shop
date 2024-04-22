@@ -21,6 +21,6 @@ export function validarCPF(cpf) {
 }
 
 // Testes
-console.log(validarEmail("exemplo@dominio.com")); // true ou false
-console.log(validarSenha("Senha@123")); // true ou false
-console.log(validarCPF("123456789020")); // true ou false
+// console.log(validarEmail("exemplo@dominio.com")); // true ou false
+// console.log(validarSenha("Senha@123")); // true ou false
+// console.log(validarCPF("123456789020")); // true ou false

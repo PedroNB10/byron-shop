@@ -7,7 +7,7 @@ import carrinhoRouter from "./routes/carrinho.routes.js";
 
 const app = express();
 const port = 8080;
-
+// app.use(express.urlencoded({extended: true})); // middleware para trabalhar com formulários
 app.use(express.json());
 // express.json() is a middleware function provided by the Express.js framework. It's used to parse incoming request bodies with JSON payloads.
 
@@ -20,6 +20,8 @@ app.get("/", (req, res) => {
 app.use("/usuarios", usuarioRouter);
 app.use("/produtos", produtosRouter);
 app.use("/carrinho", carrinhoRouter);
+
+app.use("/public", express.static("public")); // middleware para servir arquivos estáticos ou seja arquivos que não são processados pelo servidor como exemplo imagens
 
 app.use("/", exampleRouter);
 
