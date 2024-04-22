@@ -27,7 +27,7 @@ model Usuario {
 model Estoque {
   id                   Int      @id @unique @default(autoincrement())
   quantidadeDisponivel Int      @map("quantidade_disponivel") @db.Int
-  Produto              Produto?
+  produto              Produto?
 
   @@map("estoque")
 }
@@ -46,7 +46,7 @@ model Carrinho {
   fechadoEm     DateTime?      @map("fechado_em")
   statusAberto  Boolean        @map("status_aberto")
   usuarioId     Int            @map("usuario_id")
-  Usuario       Usuario        @relation(fields: [usuarioId], references: [id])
+  usuario       Usuario        @relation(fields: [usuarioId], references: [id])
   itensCarrinho ItemCarrinho[]
 
   @@map("carrinho")
@@ -60,8 +60,8 @@ model Produto {
   categoria    String         @db.VarChar(50)
   fotos        Foto[]
   estoqueId    Int            @unique @map("estoque_id")
-  Estoque      Estoque        @relation(fields: [estoqueId], references: [id], onDelete: Cascade)
-  ItemCarrinho ItemCarrinho[]
+  estoque      Estoque        @relation(fields: [estoqueId], references: [id], onDelete: Cascade)
+  itemCarrinho ItemCarrinho[]
 
   @@map("produto")
 }
@@ -71,7 +71,7 @@ model ItemCarrinho {
   quantidade Int
   produtoId  Int      @map("produto_id")
   carrinhoId Int      @map("carrinho_id")
-  Carrinho   Carrinho @relation(fields: [carrinhoId], references: [id])
+  carrinho   Carrinho @relation(fields: [carrinhoId], references: [id])
   produto    Produto  @relation(fields: [produtoId], references: [id])
 
   @@map("item_carrinho")

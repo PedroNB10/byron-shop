@@ -23,7 +23,7 @@ export const criarProduto = async (req, res) => {
       descricao: data.descricao,
       preco: data.preco,
       categoria: data.categoria,
-      Estoque: {
+      estoque: {
         create: {
           quantidadeDisponivel: data.quantidadeDisponivel,
         },
@@ -45,12 +45,36 @@ export const criarProduto = async (req, res) => {
 export const getProdutos = async (req, res) => {
   const produtos = await prisma.produto.findMany({
     include: {
-      Estoque: true,
+      estoque: true,
     },
   });
 
   res.json({
     data: produtos,
+  });
+};
+
+export const getProdutoPorIdParams = async (req, res) => {
+  const produtoId = req.params.produtoId;
+
+  const produto = await prisma.produto.findUnique({
+    where: { id: parseInt(produtoId) },
+    include: {
+      estoque: true,
+      fotos: true,
+    },
+  });
+
+  if (!produto) {
+    res.status(404).json({
+      msg: "Produto não encontrado",
+    });
+    return;
+  }
+
+  res.json({
+    data: produto,
+    msg: "Produto encontrado com sucesso",
   });
 };
 
@@ -96,7 +120,7 @@ export const adicionarFotosAoProduto = async (req, res) => {
   const fotosUrl = await prisma.foto.createMany({
     data: fotos.map((foto) => {
       return {
-        url: foto.filename,
+        url: "/public/" + foto.filename,
         produtoId: parseInt(produtoId),
       };
     }),
@@ -106,7 +130,7 @@ export const adicionarFotosAoProduto = async (req, res) => {
     where: { produtoId: parseInt(produtoId) },
   });
 
-  console.log(fotosUrl);
+  console.log(fotosDoProduto);
 
   res.json({
     data: fotosDoProduto,

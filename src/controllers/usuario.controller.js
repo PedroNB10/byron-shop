@@ -38,6 +38,36 @@ export const getUsuarios = async (req, res) => {
 //     data: usuario,
 //   });
 // };
+export const getUsuarioPorIdParams = async (req, res) => {
+  const usuarioId = req.params.usuarioId;
+
+  const usuario = await prisma.usuario.findUnique({
+    where: { id: parseInt(usuarioId) },
+    include: {
+      carrinhos: {
+        include: {
+          itensCarrinho: {
+            include: {
+              produto: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!usuario) {
+    res.status(404).json({
+      msg: "Usuário não encontrado",
+    });
+    return;
+  }
+
+  res.status(200).json({
+    data: usuario,
+    msg: "Usuário encontrado com sucesso",
+  });
+};
 
 export const getUsuarioPorId = async (usuarioId) => {
   const usuario = await prisma.usuario.findUnique({
