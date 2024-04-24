@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Usuario {
-  id        Int        @id @default(autoincrement())
+  id        String     @id @default(uuid())
   email     String     @unique @db.VarChar(100)
   senha     String     @db.VarChar(100)
   nome      String     @db.VarChar(70)
@@ -45,7 +45,7 @@ model Carrinho {
   id            Int            @id @default(autoincrement())
   fechadoEm     DateTime?      @map("fechado_em")
   statusAberto  Boolean        @map("status_aberto")
-  usuarioId     Int            @map("usuario_id")
+  usuarioId     String         @map("usuario_id")
   usuario       Usuario        @relation(fields: [usuarioId], references: [id])
   itensCarrinho ItemCarrinho[]
 

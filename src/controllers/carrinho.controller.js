@@ -12,7 +12,6 @@ export const removerProdutoDoCarrinho = async (req, res) => {
   let { produtoId, usuarioId } = data;
 
   produtoId = parseInt(produtoId);
-  usuarioId = parseInt(usuarioId);
 
   const usuario = await usuarioController.getUsuarioPorId(usuarioId);
 
@@ -41,7 +40,7 @@ export const removerProdutoDoCarrinho = async (req, res) => {
 
   if (!carrinho) {
     res.status(404).json({
-      msg: "Carrinho não encontrado",
+      msg: "Não há carrinho aberto para este usuário, é preciso adicionar produtos ao carrinho antes de removê-los",
     });
     return;
   }
@@ -148,9 +147,18 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
     });
     return;
   } else {
-    const carrinho = await prisma.carrinho.findFirst({
+    let carrinho = await prisma.carrinho.findFirst({
       where: { statusAberto: true, usuarioId: usuarioId },
     });
+    // caso não tenha carrinho aberto
+    if (!carrinho) {
+      carrinho = await prisma.carrinho.create({
+        data: {
+          statusAberto: true,
+          usuarioId: usuarioId,
+        },
+      });
+    }
 
     const itemCarrinho = await itemCarrinhoController.getItemCarrinho(
       carrinho.id,
@@ -188,5 +196,52 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
 
   res.status(200).json({
     msg: "Produto adicionado ao carrinho com sucesso",
+  });
+};
+
+export const finalizarCompra = async (req, res) => {
+  const usuarioId = req.params.usuarioId;
+  console.log(usuarioId);
+
+  const usuario = await usuarioController.getUsuarioPorId(usuarioId);
+
+  if (!usuario) {
+    res.status(404).json({
+      msg: "Usuário não encontrado",
+    });
+    return;
+  }
+
+  const carrinho = await prisma.carrinho.findFirst({
+    where: { statusAberto: true, usuarioId: usuarioId },
+    include: {
+      itensCarrinho: true,
+    },
+  });
+
+  if (!carrinho) {
+    res.status(404).json({
+      msg: "Não há carrinho aberto para este usuário, é preciso adicionar produtos ao carrinho antes de finalizar a compra",
+    });
+    return;
+  }
+
+  if (carrinho.itensCarrinho.length === 0) {
+    res.status(400).json({
+      msg: "Carrinho vazio",
+    });
+    return;
+  }
+
+  await prisma.carrinho.update({
+    where: { id: carrinho.id },
+    data: {
+      statusAberto: false,
+      fechadoEm: new Date(),
+    },
+  });
+
+  res.status(200).json({
+    msg: "Compra finalizada com sucesso",
   });
 };

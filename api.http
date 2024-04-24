@@ -33,11 +33,11 @@ Content-Type: application/json
 
 {
   "data": {
-    "nome": "Boné byron",
-    "descricao": "Boné top",
-    "preco": 69.99,
+    "nome": "Camisa byron",
+    "descricao": "Camisa top",
+    "preco": 89.99,
     "categoria": "roupas",
-    "quantidadeDisponivel": 15
+    "quantidadeDisponivel": 25
   }
 }
 
