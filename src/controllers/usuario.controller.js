@@ -42,7 +42,7 @@ export const getUsuarioPorIdParams = async (req, res) => {
   const usuarioId = req.params.usuarioId;
 
   const usuario = await prisma.usuario.findUnique({
-    where: { id: parseInt(usuarioId) },
+    where: { id: usuarioId },
     include: {
       carrinhos: {
         include: {

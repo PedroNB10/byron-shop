@@ -43,14 +43,97 @@ export const criarProduto = async (req, res) => {
 };
 
 export const getProdutos = async (req, res) => {
-  const produtos = await prisma.produto.findMany({
-    include: {
-      estoque: true,
-    },
-  });
+  const query = req.query;
+  console.log(query);
+  if (query.nome === undefined && query.categoria === undefined) {
+    const produtos = await prisma.produto.findMany({
+      include: {
+        estoque: true,
+      },
+    });
 
-  res.json({
-    data: produtos,
+    res.json({
+      data: produtos,
+    });
+    return;
+  }
+
+  console.log(query);
+
+  let nome = query.nome;
+  let categoria = query.categoria;
+
+  if (nome && !categoria) {
+    const produtos = await prisma.produto.findMany({
+      where: {
+        nome: {
+          contains: nome,
+        },
+
+        NOT: {
+          estoque: {
+            quantidadeDisponivel: 0,
+          },
+        },
+      },
+      include: {
+        estoque: true,
+      },
+    });
+
+    res.json({
+      data: produtos,
+    });
+    return;
+  }
+
+  if (!nome && categoria) {
+    const produtos = await prisma.produto.findMany({
+      where: {
+        categoria: categoria,
+        NOT: {
+          estoque: {
+            quantidadeDisponivel: 0,
+          },
+        },
+      },
+      include: {
+        estoque: true,
+      },
+    });
+
+    res.json({
+      data: produtos,
+    });
+    return;
+  }
+
+  if (nome && categoria) {
+    const produtos = await prisma.produto.findMany({
+      where: {
+        nome: {
+          contains: nome,
+        },
+        categoria: categoria,
+        NOT: {
+          estoque: {
+            quantidadeDisponivel: 0,
+          },
+        },
+      },
+      include: {
+        estoque: true,
+      },
+    });
+
+    res.json({
+      data: produtos,
+    });
+    return;
+  }
+
+  res.status(400).json({
+    msg: "Parâmetros de query não implementados!",
   });
 };
 
@@ -137,3 +220,5 @@ export const adicionarFotosAoProduto = async (req, res) => {
     msg: "Fotos adicionadas ao produto com sucesso",
   });
 };
+
+export const getProdutosPorCategoria = async (req, res) => {};

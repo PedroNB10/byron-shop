@@ -7,6 +7,8 @@ import * as usuarioController from "./usuario.controller.js";
 import * as estoqueController from "./estoques.controller.js";
 import * as itemCarrinhoController from "./item-carrinho.controller.js";
 
+export const getCarrinho = async (req, res) => {};
+
 export const removerProdutoDoCarrinho = async (req, res) => {
   const data = req.params;
   let { produtoId, usuarioId } = data;

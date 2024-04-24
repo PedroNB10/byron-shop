@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -63,6 +64,7 @@ model Produto {
   estoque      Estoque        @relation(fields: [estoqueId], references: [id], onDelete: Cascade)
   itemCarrinho ItemCarrinho[]
 
+  @@fulltext([nome, descricao, categoria]) // serve para fazer buscas full text search
   @@map("produto")
 }
 

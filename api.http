@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 #### Get http://localhost:8080/usuarios/idDoUsuario ==> Busca por um usuário por meio do seu id e retorna todos os carrinhos os que foram fechados e os que estão abertos
 
-GET http://localhost:8080/usuarios/2
+GET http://localhost:8080/usuarios/1efdc144-948e-40a3-8839-7d943ea4d130
 
 
 #### POST http://localhost:8080/produtos ==> Cria um novo produto e adiciona no carrinho
@@ -33,11 +33,11 @@ Content-Type: application/json
 
 {
   "data": {
-    "nome": "Camisa byron",
-    "descricao": "Camisa top",
+    "nome": "Copo byron",
+    "descricao": "Copo top",
     "preco": 89.99,
-    "categoria": "roupas",
-    "quantidadeDisponivel": 25
+    "categoria": "copo",
+    "quantidadeDisponivel": 10
   }
 }
 
