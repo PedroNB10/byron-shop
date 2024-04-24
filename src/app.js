@@ -6,7 +6,9 @@ import usuarioRouter from "./routes/usuario.routes.js";
 import carrinhoRouter from "./routes/carrinho.routes.js";
 
 const app = express();
-const port = 8080;
+const port = process.env.APP_PORT ?? 8080;
+const host = process.env.HOST ?? 'localhost';
+
 // app.use(express.urlencoded({extended: true})); // middleware para trabalhar com formulários
 app.use(express.json());
 // express.json() is a middleware function provided by the Express.js framework. It's used to parse incoming request bodies with JSON payloads.
@@ -26,5 +28,5 @@ app.use("/public", express.static("public")); // middleware para servir arquivos
 app.use("/", exampleRouter);
 
 app.listen(port, () => {
-  console.log(`Server Running on http://localhost:${port}`);
+  console.log(`Server Running on http://${host}:${port}`);
 });

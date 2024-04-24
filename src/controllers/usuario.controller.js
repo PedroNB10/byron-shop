@@ -148,7 +148,10 @@ export const criarUsuario = async (req, res) => {
       },
     });
 
-    const token = gerarToken(usuario);
+    const token = gerarToken({
+      id: usuario.id,
+      name: usuario.name
+    });
 
     res.json({
       data: usuario,
@@ -191,7 +194,10 @@ export const login = async (req, res) => {
     return;
   }
 
-  const token = gerarToken(usuario);
+  const token = gerarToken({
+    id: usuario.id,
+    name: usuario.name
+  });
 
   res.json({
     data: usuario,
