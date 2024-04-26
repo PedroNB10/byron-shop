@@ -15,29 +15,6 @@ export const getUsuarios = async (req, res) => {
   });
 };
 
-// função para pegar o usuário por json
-// export const getUsuarioPorId = async (req, res) => {
-//   // console.log(req.params.usuarioId);
-//   const usuario = await prisma.usuario.findFirst({
-//     where: {
-//       id: parseInt(req.params.usuarioId),
-//     },
-//     include: {
-//       carrinhos: true,
-//     },
-//   });
-
-//   if (!usuario) {
-//     res.status(404).json({
-//       msg: "Usuário não encontrado",
-//     });
-//     return;
-//   }
-
-//   res.json({
-//     data: usuario,
-//   });
-// };
 export const getUsuarioPorIdParams = async (req, res) => {
   const usuarioId = req.params.usuarioId;
 
@@ -150,11 +127,12 @@ export const criarUsuario = async (req, res) => {
 
     const token = gerarToken({
       id: usuario.id,
-      name: usuario.name
+      nome: usuario.nome,
+      email: usuario.email,
     });
 
     res.json({
-      data: usuario,
+      data: { usuarioId: usuario.id, nome: usuario.nome, email: usuario.email },
       token: token,
       msg: "Usuário criado com sucesso",
     });
@@ -196,11 +174,11 @@ export const login = async (req, res) => {
 
   const token = gerarToken({
     id: usuario.id,
-    name: usuario.name
+    nome: usuario.nome,
+    email: usuario.email,
   });
 
   res.json({
-    data: usuario,
     token: token,
     msg: "Login realizado com sucesso",
   });
