@@ -21,6 +21,7 @@ model Usuario {
   nome      String     @db.VarChar(70)
   cpf       String     @unique @db.VarChar(11)
   carrinhos Carrinho[]
+  role      String     @default("USER") @db.VarChar(20)
 
   @@map("usuario")
 }

@@ -66,9 +66,9 @@ export const getUsuarioPorId = async (usuarioId) => {
 };
 
 export const criarUsuario = async (req, res) => {
-  const data = req.body.data;
-  console.log(data);
-  if (!data.email || !data.nome || !data.senha || !data.cpf) {
+  // verifiacar questão da role admin
+  const { email, senha, nome, cpf, role } = req.body;
+  if (!email || !nome || !senha || !cpf || !role) {
     res.status(400).json({
       msg: "Dados obrigatórios não foram preenchidos",
     });
@@ -78,10 +78,10 @@ export const criarUsuario = async (req, res) => {
     where: {
       OR: [
         {
-          email: data.email,
+          email: email,
         },
         {
-          cpf: data.cpf,
+          cpf: cpf,
         },
       ],
     },
@@ -94,21 +94,21 @@ export const criarUsuario = async (req, res) => {
     return;
   }
 
-  if (!regex.validarEmail(data.email)) {
+  if (!regex.validarEmail(email)) {
     res.status(400).json({
       msg: "Digite um e-mail válido!",
     });
     return;
   }
 
-  if (!regex.validarSenha(data.senha)) {
+  if (!regex.validarSenha(senha)) {
     res.status(400).json({
       msg: "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial",
     });
     return;
   }
 
-  if (!regex.validarCPF(data.cpf)) {
+  if (!regex.validarCPF(cpf)) {
     res.status(400).json({
       msg: "O CPF deve conter 11 dígitos",
     });
@@ -118,10 +118,11 @@ export const criarUsuario = async (req, res) => {
   try {
     const usuario = await prisma.usuario.create({
       data: {
-        nome: data.nome,
-        email: data.email,
-        senha: data.senha,
-        cpf: data.cpf,
+        nome: nome,
+        email: email,
+        senha: senha,
+        cpf: cpf,
+        role: role,
       },
     });
 

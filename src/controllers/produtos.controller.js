@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { jwtDecode } from "jwt-decode";
 
 const prisma = new PrismaClient();
 
@@ -15,6 +16,26 @@ export const criarProduto = async (req, res) => {
     res.status(400).json({
       msg: "Dados obrigatórios não foram preenchidos",
     });
+  }
+  const token = req.headers.authorization.split(" ")[1];
+  const usuarioId = jwtDecode(token).id;
+
+  const usuarioExistente = await prisma.usuario.findUnique({
+    where: { id: usuarioId },
+  });
+
+  if (usuarioExistente.role !== "ADMIN") {
+    res.status(403).json({
+      msg: "Você não tem permissão para criar um produto, somente administradores podem criar produtos",
+    });
+    return;
+  }
+
+  if (!usuarioExistente) {
+    res.status(404).json({
+      msg: "Usuário não encontrado",
+    });
+    return;
   }
 
   const produto = await prisma.produto.create({
