@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { gerarToken } from "../utils/jwt.js";
 import * as regex from "../utils/validar-cadastro.js";
+
 const prisma = new PrismaClient();
 
 export const getUsuarios = async (req, res) => {
@@ -68,10 +69,11 @@ export const getUsuarioPorId = async (usuarioId) => {
 export const criarUsuario = async (req, res) => {
   // verifiacar questão da role admin
   const { email, senha, nome, cpf, role } = req.body;
-  if (!email || !nome || !senha || !cpf || !role) {
+  if (!email || !nome || !senha || !cpf) {
     res.status(400).json({
       msg: "Dados obrigatórios não foram preenchidos",
     });
+    return;
   }
 
   const usuarioExistente = await prisma.usuario.findFirst({
@@ -122,7 +124,7 @@ export const criarUsuario = async (req, res) => {
         email: email,
         senha: senha,
         cpf: cpf,
-        role: role,
+        role: role ? role : "USER",
       },
     });
 
@@ -145,22 +147,23 @@ export const criarUsuario = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const data = req.body.data;
+  const { email, senha } = req.body;
 
-  if (!data.email || !data.senha) {
+  if (!email || !senha) {
     res.status(400).json({
       msg: "Dados obrigatórios não foram preenchidos",
     });
+    return;
   }
 
   const usuario = await prisma.usuario.findFirst({
     where: {
       AND: [
         {
-          email: data.email,
+          email: email,
         },
         {
-          senha: data.senha,
+          senha: senha,
         },
       ],
     },

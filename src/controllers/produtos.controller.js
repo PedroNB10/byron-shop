@@ -4,15 +4,9 @@ import { jwtDecode } from "jwt-decode";
 const prisma = new PrismaClient();
 
 export const criarProduto = async (req, res) => {
-  const data = req.body.data;
+  const { nome, descricao, preco, quantidadeDisponivel, categoria } = req.body;
 
-  if (
-    !data.nome ||
-    !data.descricao ||
-    !data.preco ||
-    !data.quantidadeDisponivel ||
-    !data.categoria
-  ) {
+  if (!nome || !descricao || !preco || !quantidadeDisponivel || !categoria) {
     res.status(400).json({
       msg: "Dados obrigatórios não foram preenchidos",
     });
@@ -40,13 +34,13 @@ export const criarProduto = async (req, res) => {
 
   const produto = await prisma.produto.create({
     data: {
-      nome: data.nome,
-      descricao: data.descricao,
-      preco: data.preco,
-      categoria: data.categoria,
+      nome: nome,
+      descricao: descricao,
+      preco: preco,
+      categoria: categoria,
       estoque: {
         create: {
-          quantidadeDisponivel: data.quantidadeDisponivel,
+          quantidadeDisponivel: quantidadeDisponivel,
         },
       },
       fotos: {

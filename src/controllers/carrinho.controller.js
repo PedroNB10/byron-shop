@@ -7,13 +7,17 @@ import * as usuarioController from "./usuario.controller.js";
 import * as estoqueController from "./estoques.controller.js";
 import * as itemCarrinhoController from "./item-carrinho.controller.js";
 
+import { jwtDecode } from "jwt-decode";
+
 export const getCarrinho = async (req, res) => {};
 
 export const removerProdutoDoCarrinho = async (req, res) => {
-  const data = req.params;
-  let { produtoId, usuarioId } = data;
+  let { produtoId } = req.params;
 
   produtoId = parseInt(produtoId);
+
+  const token = req.headers.authorization.split(" ")[1];
+  const usuarioId = jwtDecode(token).id;
 
   const usuario = await usuarioController.getUsuarioPorId(usuarioId);
 
@@ -90,8 +94,18 @@ export const removerProdutoDoCarrinho = async (req, res) => {
 };
 
 export const adicionarProdutoAoCarrinho = async (req, res) => {
-  const data = req.body.data;
-  const { produtoId, usuarioId } = data;
+  console.log("adicionarProdutoAoCarrinho");
+  const produtoId = parseInt(req.params.produtoId);
+  console.log(produtoId);
+  if (!produtoId) {
+    res.status(400).json({
+      msg: "Parâmetros inválidos",
+    });
+    return;
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+  const usuarioId = jwtDecode(token).id;
 
   const usuario = await usuarioController.getUsuarioPorId(usuarioId);
 
@@ -202,7 +216,9 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
 };
 
 export const finalizarCompra = async (req, res) => {
-  const usuarioId = req.params.usuarioId;
+  console.log("finalizarCompra");
+  const token = req.headers.authorization.split(" ")[1];
+  const usuarioId = jwtDecode(token).id;
   console.log(usuarioId);
 
   const usuario = await usuarioController.getUsuarioPorId(usuarioId);

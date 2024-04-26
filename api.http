@@ -1,64 +1,56 @@
 #### POST http://localhost:8080/usuarios ==> Cria um novo usuário
+# Nessa rota é necessário informar a role "ADMIN" caso o usuário seja um administrador
 POST http://localhost:8080/usuarios
 Content-Type: application/json
 
 {
-  "data": {
-    "email": "Giovana@email.com",
-    "senha": "senha123@A",
-    "nome": "Giovana Silva",
-    "cpf": "21342678245"
-  }
+
+  "email": "Giovana@email.com",
+  "senha": "senha123@A",
+  "nome": "Giovana Silva",
+  "cpf": "21342678245"
+
 }
 
-#### POST http://localhost:8080/usuarios/login ==> Faz login de um usuário
+#### POST http://localhost:8080/usuarios/login ==> Faz login de um usuário e retorna o token de autenticação(front/mobile) precisa do token para acessar as rotas protegidas
 
 POST http://localhost:8080/usuarios/login
 Content-Type: application/json
 
 {
-  "data":{
     "email": "Giovana@email.com",
     "senha": "senha123@A"
-  }
 }
 #### Get http://localhost:8080/usuarios/idDoUsuario ==> Busca por um usuário por meio do seu id e retorna todos os carrinhos os que foram fechados e os que estão abertos
 
-GET http://localhost:8080/usuarios/1efdc144-948e-40a3-8839-7d943ea4d130
+GET http://localhost:8080/usuarios/750a26ce-fce9-4bae-af6c-9708de66d3e0
 
 
-#### POST http://localhost:8080/produtos ==> Cria um novo produto e adiciona no carrinho
+#### POST http://localhost:8080/produtos ==> Cria um novo produto e adiciona no carrinho, Nessa rota precisa do Header Authorization com o token do usuário Admin logado
 POST http://localhost:8080/produtos
 Content-Type: application/json
 
 {
-  "data": {
-    "nome": "Copo byron",
-    "descricao": "Copo top",
-    "preco": 89.99,
-    "categoria": "copo",
-    "quantidadeDisponivel": 10
-  }
+  "nome": "Tênis Reebok Nano X",
+  "descricao": "Tênis versátil para treinos de crossfit e atividades funcionais",
+  "preco": 149.99,
+  "categoria": "treino",
+  "quantidadeDisponivel": 30
 }
+
 
 #### GET http://localhost:8080/produtos ==> Busca todos os produtos cadastrados
 
 GET http://localhost:8080/produtos
 
-#### POST http://localhost:8080/produtos/carrinho ==> Adiciona um produto a um carrinho
+#### POST http://localhost:8080/carrinho/adicionar/idDoProduto==> Adiciona um produto a um carrinho, nessa rota precisa do Header Authorization com o token do usuário logado
 
-POST http://localhost:8080/carrinho
-Content-Type: application/json
-
-{
-  "data": {
-    "produtoId": 6,
-    "usuarioId": 2
- 
-  }
-}
-
-### DELETE http://localhost:8080/carrinho/usuarioId/produtoId ==> Deleta um produto de um carrinho
-DELETE http://localhost:8080/carrinho/2/6
+POST http://localhost:8080/carrinho/adicionar/9
 
 
+### DELETE http://localhost:8080/carrinho/remover/produtoId ==> Deleta um produto de um carrinho, nessa rota precisa do Header Authorization com o token do usuário logado
+DELETE http://localhost:8080/carrinho/remover/6
+
+
+### POST http://localhost:8080/carrinho/finalizar-compra ==> Finaliza a compra de um carrinho, nessa rota precisa do Header Authorization com o token do usuário logado
+POST http://localhost:8080/carrinho/finalizar
