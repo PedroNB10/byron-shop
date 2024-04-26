@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { gerarToken } from "../utils/jwt.js";
 import * as regex from "../utils/validar-cadastro.js";
+
 const prisma = new PrismaClient();
 
 export const getUsuarios = async (req, res) => {
@@ -15,29 +16,6 @@ export const getUsuarios = async (req, res) => {
   });
 };
 
-// função para pegar o usuário por json
-// export const getUsuarioPorId = async (req, res) => {
-//   // console.log(req.params.usuarioId);
-//   const usuario = await prisma.usuario.findFirst({
-//     where: {
-//       id: parseInt(req.params.usuarioId),
-//     },
-//     include: {
-//       carrinhos: true,
-//     },
-//   });
-
-//   if (!usuario) {
-//     res.status(404).json({
-//       msg: "Usuário não encontrado",
-//     });
-//     return;
-//   }
-
-//   res.json({
-//     data: usuario,
-//   });
-// };
 export const getUsuarioPorIdParams = async (req, res) => {
   const usuarioId = req.params.usuarioId;
 
@@ -89,22 +67,23 @@ export const getUsuarioPorId = async (usuarioId) => {
 };
 
 export const criarUsuario = async (req, res) => {
-  const data = req.body.data;
-  console.log(data);
-  if (!data.email || !data.nome || !data.senha || !data.cpf) {
+  // verifiacar questão da role admin
+  const { email, senha, nome, cpf, role } = req.body;
+  if (!email || !nome || !senha || !cpf) {
     res.status(400).json({
       msg: "Dados obrigatórios não foram preenchidos",
     });
+    return;
   }
 
   const usuarioExistente = await prisma.usuario.findFirst({
     where: {
       OR: [
         {
-          email: data.email,
+          email: email,
         },
         {
-          cpf: data.cpf,
+          cpf: cpf,
         },
       ],
     },
@@ -117,21 +96,21 @@ export const criarUsuario = async (req, res) => {
     return;
   }
 
-  if (!regex.validarEmail(data.email)) {
+  if (!regex.validarEmail(email)) {
     res.status(400).json({
       msg: "Digite um e-mail válido!",
     });
     return;
   }
 
-  if (!regex.validarSenha(data.senha)) {
+  if (!regex.validarSenha(senha)) {
     res.status(400).json({
       msg: "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial",
     });
     return;
   }
 
-  if (!regex.validarCPF(data.cpf)) {
+  if (!regex.validarCPF(cpf)) {
     res.status(400).json({
       msg: "O CPF deve conter 11 dígitos",
     });
@@ -141,20 +120,22 @@ export const criarUsuario = async (req, res) => {
   try {
     const usuario = await prisma.usuario.create({
       data: {
-        nome: data.nome,
-        email: data.email,
-        senha: data.senha,
-        cpf: data.cpf,
+        nome: nome,
+        email: email,
+        senha: senha,
+        cpf: cpf,
+        role: role ? role : "USER",
       },
     });
 
     const token = gerarToken({
       id: usuario.id,
-      name: usuario.name
+      nome: usuario.nome,
+      email: usuario.email,
     });
 
     res.json({
-      data: usuario,
+      data: { usuarioId: usuario.id, nome: usuario.nome, email: usuario.email },
       token: token,
       msg: "Usuário criado com sucesso",
     });
@@ -166,22 +147,23 @@ export const criarUsuario = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const data = req.body.data;
+  const { email, senha } = req.body;
 
-  if (!data.email || !data.senha) {
+  if (!email || !senha) {
     res.status(400).json({
       msg: "Dados obrigatórios não foram preenchidos",
     });
+    return;
   }
 
   const usuario = await prisma.usuario.findFirst({
     where: {
       AND: [
         {
-          email: data.email,
+          email: email,
         },
         {
-          senha: data.senha,
+          senha: senha,
         },
       ],
     },
@@ -196,11 +178,11 @@ export const login = async (req, res) => {
 
   const token = gerarToken({
     id: usuario.id,
-    name: usuario.name
+    nome: usuario.nome,
+    email: usuario.email,
   });
 
   res.json({
-    data: usuario,
     token: token,
     msg: "Login realizado com sucesso",
   });

@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer"; // essa lib é para upload de arquivos
 import path from "path"; // essa lib é para trabalhar com caminhos de arquivos
 import * as produtosController from "../controllers/produtos.controller.js";
+import autorizarUsuarioAdmin from "../middlewares/admin.middleware.js";
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -16,7 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.get("/:produtoId", produtosController.getProdutoPorId);
-router.post("/", produtosController.criarProduto);
+router.post("/", autorizarUsuarioAdmin, produtosController.criarProduto);
 router.get("/", produtosController.getProdutos);
 // router.post("/carrinho", produtosController.adicionarProdutoAoCarrinho);
 

@@ -4,20 +4,16 @@ import autorizarUsuario from "../middlewares/auth.middlewares.js";
 const router = express.Router();
 
 router.post(
-  "/",
+  "/adicionar/:produtoId",
   autorizarUsuario,
   carrinhoController.adicionarProdutoAoCarrinho
 );
 router.delete(
-  "/:usuarioId/:produtoId",
+  "/remover/:produtoId",
   autorizarUsuario,
   carrinhoController.removerProdutoDoCarrinho
 );
 
-router.post(
-  "/finalizar-compra/:usuarioId",
-
-  carrinhoController.finalizarCompra
-);
+router.post("/finalizar", carrinhoController.finalizarCompra);
 
 export default router;
