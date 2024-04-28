@@ -1,0 +1,96 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "API de Produtos",
+      "description": "API de Produtos"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "Servidor Local"
+      },
+      {
+        "url": "http://capacitacao.byronsolutions.com:3000/",
+        "description": "Servidor de Produção"
+      }
+    ],
+    "paths": {
+      "/produtos": {
+        "get": {
+          "summary": "Listar Produtos",
+          "description": "Listar Produtos",
+          "tags": ["Produtos"],
+          "responses": {
+            "200": {
+              "description": "Sucesso",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/Produto"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Requisição Inválida",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "msg": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Produto": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nome": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "descricao": {
+              "type": "string",
+              "maxLength": 4000
+            },
+            "preco": {
+              "type": "number",
+              "format": "double"
+            },
+            "categoria": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "estoqueId": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "required": ["id", "nome", "descricao", "preco", "categoria", "estoqueId"]
+        }
+      }
+    }
+  }
+  
