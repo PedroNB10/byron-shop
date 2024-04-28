@@ -64,6 +64,7 @@ export const getProdutos = async (req, res) => {
     const produtos = await prisma.produto.findMany({
       include: {
         estoque: true,
+        fotos: true,
       },
     });
 
@@ -93,6 +94,7 @@ export const getProdutos = async (req, res) => {
       },
       include: {
         estoque: true,
+        fotos: true,
       },
     });
 
@@ -114,6 +116,7 @@ export const getProdutos = async (req, res) => {
       },
       include: {
         estoque: true,
+        fotos: true,
       },
     });
 
