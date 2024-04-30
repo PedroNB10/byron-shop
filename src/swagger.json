@@ -230,6 +230,24 @@
         "summary": "Listar Produtos",
         "description": "Listar Produtos",
         "tags": ["Produtos"],
+        "parameters": [
+          {
+            "name": "categoria",
+            "in": "query",
+            "description": "Filtrar por categoria",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nome",
+            "in": "query",
+            "description": "Filtrar por nome",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Sucesso",
@@ -266,6 +284,7 @@
           }
         }
       },
+
       "post": {
         "summary": "Criar Produto",
         "description": "Criar um novo produto",
