@@ -297,6 +297,184 @@
           }
         }
       }
+    },
+    "/carrinho/adicionar/{produtoId}": {
+      "post": {
+        "summary": "Adiciona um produto ao carrinho do usuário",
+        "description": "Adiciona um produto ao carrinho do usuário",
+        "tags": ["Carrinho"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "produtoId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "ID do produto a ser adicionado ao carrinho"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto adicionado ao carrinho com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Produto adicionado ao carrinho com sucesso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos ou quantidade insuficiente em estoque",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Parâmetros inválidos ou quantidade insuficiente em estoque"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado: token de acesso não fornecido ou inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Não autorizado: token de acesso não fornecido ou inválido"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado ou Produto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Usuário não encontrado ou Produto não encontrado"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/carrinho/remover/{produtoId}": {
+      "delete": {
+        "summary": "Remove um produto do carrinho do usuário",
+        "description": "Remove um produto específico do carrinho do usuário",
+        "tags": ["Carrinho"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "produtoId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "ID do produto a ser removido do carrinho"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto removido do carrinho com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Produto removido do carrinho com sucesso"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado: token de acesso não fornecido ou inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Não autorizado: token de acesso não fornecido ou inválido"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado, Produto não encontrado, Não há carrinho aberto para este usuário, ou Produto não encontrado no carrinho",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Usuário não encontrado, Produto não encontrado, Não há carrinho aberto para este usuário, ou Produto não encontrado no carrinho"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
