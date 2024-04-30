@@ -27,7 +27,7 @@ export const criarProduto = async (req, res) => {
 
   if (!usuarioExistente) {
     res.status(404).json({
-      msg: "Usuário não encontrado",
+      msg: "Usuário Admin não encontrado",
     });
     return;
   }
@@ -51,7 +51,7 @@ export const criarProduto = async (req, res) => {
     },
   });
 
-  res.json({
+  res.status(201).json({
     data: produto,
     msg: "Produto criado com sucesso",
   });

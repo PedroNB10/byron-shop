@@ -1,56 +1,112 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "API de Produtos",
-      "description": "API de Produtos"
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de uma Lojinha",
+    "description": "API de uma Lojinha"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Servidor Local"
     },
-    "servers": [
-      {
-        "url": "http://localhost:8080",
-        "description": "Servidor Local"
-      },
-      {
-        "url": "http://capacitacao.byronsolutions.com:3000/",
-        "description": "Servidor de Produção"
-      }
-    ],
-    "paths": {
-      "/produtos": {
-        "get": {
-          "summary": "Listar Produtos",
-          "description": "Listar Produtos",
-          "tags": ["Produtos"],
-          "responses": {
-            "200": {
-              "description": "Sucesso",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "data": {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/components/schemas/Produto"
-                        }
-                      }
-                    }
+    {
+      "url": "http://capacitacao.byronsolutions.com:3000/",
+      "description": "Servidor de Produção"
+    }
+  ],
+  "paths": {
+    "/usuarios/login": {
+      "post": {
+        "summary": "Logar Usuário no sistema",
+        "description": "Logar Usuário no sistema",
+        "tags": ["Usuarios"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "senha": {
+                    "type": "string",
+                    "maxLength": 100
                   }
+                },
+                "required": [
+                  "nome",
+                  "descricao",
+                  "preco",
+                  "quantidadeDisponivel",
+                  "categoria"
+                ]
+              },
+              "example": {
+                "email": "Pedro@admin.com",
+                "senha": "aabbCC@10"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["token", "msg"]
+                },
+                "example": {
+                  "token": "token-super-aleatorio",
+                  "msg": "Login realizado com sucesso"
                 }
               }
-            },
-            "400": {
-              "description": "Requisição Inválida",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "msg": {
-                        "type": "string"
-                      }
+            }
+          },
+          "400": {
+            "description": "Dados obrigatórios não foram preenchidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
                     }
                   }
+                },
+                "example": {
+                  "msg": "Dados obrigatórios não foram preenchidos"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Login ou a senha estão incorretos, rota não autorizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Login ou a senha estão incorretos, rota não autorizada"
                 }
               }
             }
@@ -58,39 +114,225 @@
         }
       }
     },
-    "components": {
-      "schemas": {
-        "Produto": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "integer",
-              "format": "int32"
-            },
-            "nome": {
-              "type": "string",
-              "maxLength": 100
-            },
-            "descricao": {
-              "type": "string",
-              "maxLength": 4000
-            },
-            "preco": {
-              "type": "number",
-              "format": "double"
-            },
-            "categoria": {
-              "type": "string",
-              "maxLength": 50
-            },
-            "estoqueId": {
-              "type": "integer",
-              "format": "int32"
+
+    "/produtos": {
+      "get": {
+        "summary": "Listar Produtos",
+        "description": "Listar Produtos",
+        "tags": ["Produtos"],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Produto"
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
-          "required": ["id", "nome", "descricao", "preco", "categoria", "estoqueId"]
+          "400": {
+            "description": "Requisição Inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar Produto",
+        "description": "Criar um novo produto",
+        "tags": ["Produtos"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "descricao": {
+                    "type": "string",
+                    "maxLength": 4000
+                  },
+                  "preco": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "quantidadeDisponivel": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "categoria": {
+                    "type": "string",
+                    "maxLength": 50
+                  }
+                },
+                "required": [
+                  "nome",
+                  "descricao",
+                  "preco",
+                  "quantidadeDisponivel",
+                  "categoria"
+                ]
+              },
+              "example": {
+                "nome": "Produto Teste",
+                "descricao": "Descrição do Produto Teste",
+                "preco": 10.0,
+                "quantidadeDisponivel": 10,
+                "categoria": "Categoria Teste"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produto criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Produto"
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": 1,
+                    "nome": "Produto Teste",
+                    "descricao": "Descrição do Produto Teste",
+                    "preco": 10.0,
+                    "categoria": "Categoria Teste",
+                    "estoqueId": 1
+                  },
+                  "msg": "Produto criado com sucesso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados obrigatórios não foram preenchidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Dados obrigatórios não foram preenchidos"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Você não tem permissão para criar um produto, somente administradores podem criar produtos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Você não tem permissão para criar um produto, somente administradores podem criar produtos"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário Admin não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Usuário não encontrado"
+                }
+              }
+            }
+          }
         }
       }
     }
+  },
+  "components": {
+    "schemas": {
+      "Produto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nome": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "descricao": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "preco": {
+            "type": "number",
+            "format": "double"
+          },
+          "categoria": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "estoqueId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "id",
+          "nome",
+          "descricao",
+          "preco",
+          "categoria",
+          "estoqueId"
+        ]
+      }
+    }
   }
-  
+}
