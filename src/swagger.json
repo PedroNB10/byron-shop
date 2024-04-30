@@ -160,6 +160,11 @@
         "summary": "Criar Produto",
         "description": "Criar um novo produto",
         "tags": ["Produtos"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -332,6 +337,13 @@
           "categoria",
           "estoqueId"
         ]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }
