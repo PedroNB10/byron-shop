@@ -98,7 +98,7 @@
                     "nome": "Nome do Usuário",
                     "email": "usuario@example.com"
                   },
-                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tZSI6Ik5vbWUgZG8gVXN1w6FyaW8iLCJlbWFpbCI6InVzdWFyaW9AZXhhbXBsZS5jb20ifQ.WVXwL2K6itG3P5bRGyLjKGBc7g9p2UuO81bdwT_rNsY",
+                  "token": "token-super-aleatorio",
                   "msg": "Usuário criado com sucesso"
                 }
               }
