@@ -263,3 +263,45 @@ export const finalizarCompra = async (req, res) => {
     msg: "Compra finalizada com sucesso",
   });
 };
+
+export const getCarrinhoPorUsuarioId = async (req, res) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const usuarioId = jwtDecode(token).id;
+  console.log(usuarioId);
+
+  const carrinho = await prisma.carrinho.findFirst({
+    where: {
+      AND: [{ statusAberto: true }, { usuarioId: usuarioId }],
+    },
+    include: {
+      itensCarrinho: {
+        include: {
+          produto: {
+            include: {
+              fotos: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!carrinho) {
+    res.status(404).json({
+      msg: "Carrinho não encontrado",
+    });
+    return;
+  }
+
+  if (carrinho.itensCarrinho.length === 0) {
+    res.status(400).json({
+      msg: "Carrinho vazio",
+    });
+    return;
+  }
+
+  res.status(200).json({
+    data: carrinho.itensCarrinho,
+    msg: "Carrinho encontrado com sucesso",
+  });
+};
