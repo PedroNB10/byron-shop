@@ -671,6 +671,143 @@
           }
         ]
       }
+    },
+    "/carrinho": {
+      "get": {
+        "summary": "Obter carrinho por ID de usuário",
+        "description": "Obtém o carrinho de compras aberto do usuário atual",
+        "tags": ["Carrinho"],
+        "responses": {
+          "200": {
+            "description": "Carrinho encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "format": "int64"
+                      },
+                      "produto": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "format": "int64"
+                          },
+                          "nome": {
+                            "type": "string"
+                          },
+                          "descricao": {
+                            "type": "string"
+                          },
+                          "preco": {
+                            "type": "number",
+                            "format": "double"
+                          },
+                          "categoria": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "quantidade": {
+                        "type": "integer",
+                        "format": "int32"
+                      }
+                    }
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "produto": {
+                      "id": 1,
+                      "nome": "Produto A",
+                      "descricao": "Descrição do Produto A",
+                      "preco": 10.0,
+                      "categoria": "Categoria A"
+                    },
+                    "quantidade": 2
+                  },
+                  {
+                    "id": 2,
+                    "produto": {
+                      "id": 2,
+                      "nome": "Produto B",
+                      "descricao": "Descrição do Produto B",
+                      "preco": 15.0,
+                      "categoria": "Categoria B"
+                    },
+                    "quantidade": 1
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Carrinho vazio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Carrinho vazio"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado: token de acesso não fornecido ou inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Não autorizado: token de acesso não fornecido ou inválido"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Carrinho não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Carrinho não encontrado"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
