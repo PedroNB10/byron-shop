@@ -720,30 +720,50 @@
                     }
                   }
                 },
-                "example": [
-                  {
-                    "id": 1,
-                    "produto": {
+                "example": {
+                  "data": [
+                    {
                       "id": 1,
-                      "nome": "Produto A",
-                      "descricao": "Descrição do Produto A",
-                      "preco": 10.0,
-                      "categoria": "Categoria A"
+                      "produto": {
+                        "id": 1,
+                        "nome": "Produto A",
+                        "descricao": "Descrição do Produto A",
+                        "preco": 10.0,
+                        "categoria": "Categoria A",
+                        "estoqueId": 1,
+                        "fotos": [
+                          {
+                            "id": 1,
+                            "url": "/public/default.jpg",
+                            "produtoId": 1
+                          }
+                        ]
+                      },
+                      "quantidade": 2
                     },
-                    "quantidade": 2
-                  },
-                  {
-                    "id": 2,
-                    "produto": {
+
+                    {
                       "id": 2,
-                      "nome": "Produto B",
-                      "descricao": "Descrição do Produto B",
-                      "preco": 15.0,
-                      "categoria": "Categoria B"
-                    },
-                    "quantidade": 1
-                  }
-                ]
+                      "produto": {
+                        "id": 2,
+                        "nome": "Produto B",
+                        "descricao": "Descrição do Produto B",
+                        "preco": 20.0,
+                        "categoria": "Categoria B",
+                        "estoqueId": 2,
+                        "fotos": [
+                          {
+                            "id": 2,
+                            "url": "/public/default.jpg",
+                            "produtoId": 2
+                          }
+                        ]
+                      },
+                      "quantidade": 1
+                    }
+                  ],
+                  "msg": "Carrinho encontrado com sucesso"
+                }
               }
             }
           },
@@ -766,7 +786,7 @@
             }
           },
           "401": {
-            "description": "Não autorizado: token de acesso não fornecido ou inválido",
+            "description": "Você precisa estar logado para acessar esse recurso",
             "content": {
               "application/json": {
                 "schema": {
@@ -778,7 +798,7 @@
                   }
                 },
                 "example": {
-                  "msg": "Não autorizado: token de acesso não fornecido ou inválido"
+                  "msg": "Você precisa estar logado para acessar esse recurso"
                 }
               }
             }

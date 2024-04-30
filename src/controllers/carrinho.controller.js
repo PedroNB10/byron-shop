@@ -276,7 +276,11 @@ export const getCarrinhoPorUsuarioId = async (req, res) => {
     include: {
       itensCarrinho: {
         include: {
-          produto: true,
+          produto: {
+            include: {
+              fotos: true,
+            },
+          },
         },
       },
     },
@@ -298,5 +302,6 @@ export const getCarrinhoPorUsuarioId = async (req, res) => {
 
   res.status(200).json({
     data: carrinho.itensCarrinho,
+    msg: "Carrinho encontrado com sucesso",
   });
 };
