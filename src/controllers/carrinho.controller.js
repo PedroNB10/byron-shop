@@ -99,7 +99,7 @@ export const adicionarProdutoAoCarrinho = async (req, res) => {
   console.log(produtoId);
   if (!produtoId) {
     res.status(400).json({
-      msg: "Parâmetros inválidos",
+      msg: "Parâmetros inválidos, id do produto não encontrado",
     });
     return;
   }
