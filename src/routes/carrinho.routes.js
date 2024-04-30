@@ -15,5 +15,5 @@ router.delete(
 );
 
 router.post("/finalizar", carrinhoController.finalizarCompra);
-
+router.get("/", autorizarUsuario, carrinhoController.getCarrinhoPorUsuarioId);
 export default router;
