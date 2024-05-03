@@ -8,13 +8,13 @@ import produtosRouter from "./routes/produtos.routes.js";
 import usuarioRouter from "./routes/usuario.routes.js";
 import carrinhoRouter from "./routes/carrinho.routes.js";
 import fs from "node:fs";
-let swaggerDocs = null;
+let swaggerDocs = {};
 
 try {
   const filePath = "src/swagger.json";
   const data = fs.readFileSync(filePath, "utf8");
   swaggerDocs = JSON.parse(data);
-  console.log(swaggerDocs);
+  //console.log(swaggerDocs);
 } catch (err) {
   console.error("Error reading or parsing the JSON file:", err);
 }

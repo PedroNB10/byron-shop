@@ -1,8 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { gerarToken } from "../utils/jwt.js";
 import * as regex from "../utils/validar-cadastro.js";
+import { jwtDecode } from "jwt-decode";
 
 const prisma = new PrismaClient();
+
+function exclude(user, keys) {
+  return Object.fromEntries(
+    Object.entries(user).filter(([key]) => !keys.includes(key))
+  );
+}
 
 export const getUsuarios = async (req, res) => {
   const usuarios = await prisma.usuario.findMany({
@@ -13,6 +20,37 @@ export const getUsuarios = async (req, res) => {
 
   res.json({
     data: usuarios,
+  });
+};
+
+export const getDadosDoUsuario = async (req, res) => {
+  let token;
+  let usuarioId;
+  try {
+    token = req.headers.authorization.split(" ")[1];
+    usuarioId = jwtDecode(token).id;
+  } catch (err) {
+    return res.status(401).json({
+      msg: err.message,
+    });
+  }
+
+  const usuario = await prisma.usuario.findUnique({
+    where: { id: usuarioId },
+  });
+
+  if (!usuario) {
+    res.status(404).json({
+      msg: "Usuário não encontrado",
+    });
+    return;
+  }
+
+  const usuarioSemDadosSecretos = exclude(usuario, ["senha", "cpf"]);
+
+  res.status(200).json({
+    data: usuarioSemDadosSecretos,
+    msg: "Usuário encontrado com sucesso",
   });
 };
 
