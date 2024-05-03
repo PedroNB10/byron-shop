@@ -9,6 +9,14 @@ export default function autorizarUsuarioAdmin(req, res, next) {
     });
   }
 
+  const tokenArray = authHeader.split(" ");
+
+  if (tokenArray.length !== 2) {
+    return res.status(401).json({
+      msg: "Token enviado não está no formato adequado",
+    });
+  }
+
   const token = authHeader.split(" ")[1]; // ['Bearer', 'token'][1] (transforma em um array)
 
   if (token) {

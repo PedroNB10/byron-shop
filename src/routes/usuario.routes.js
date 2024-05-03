@@ -10,5 +10,5 @@ router.post("/login", usuarioController.login);
 // router.get("/", autorizarUsuario, usuarioController.getUsuarios);
 router.get("/", usuarioController.getUsuarios);
 // router.get("/:usuarioId", usuarioController.getUsuarioPorIdParams);
-router.get("/account", usuarioController.getDadosDoUsuario);
+router.get("/account", autorizarUsuario, usuarioController.getDadosDoUsuario);
 export default router;

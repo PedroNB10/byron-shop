@@ -265,43 +265,51 @@ export const finalizarCompra = async (req, res) => {
 };
 
 export const getCarrinhoPorUsuarioId = async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1];
-  const usuarioId = jwtDecode(token).id;
-  console.log(usuarioId);
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const usuarioId = jwtDecode(token).id;
+    console.log(usuarioId);
 
-  const carrinho = await prisma.carrinho.findFirst({
-    where: {
-      AND: [{ statusAberto: true }, { usuarioId: usuarioId }],
-    },
-    include: {
-      itensCarrinho: {
-        include: {
-          produto: {
-            include: {
-              fotos: true,
+    const carrinho = await prisma.carrinho.findFirst({
+      where: {
+        AND: [{ statusAberto: true }, { usuarioId: usuarioId }],
+      },
+      include: {
+        itensCarrinho: {
+          include: {
+            produto: {
+              include: {
+                fotos: true,
+              },
             },
           },
         },
       },
-    },
-  });
-
-  if (!carrinho) {
-    res.status(404).json({
-      msg: "Carrinho não encontrado",
     });
-    return;
-  }
 
-  if (carrinho.itensCarrinho.length === 0) {
-    res.status(400).json({
-      msg: "Carrinho vazio",
+    if (!carrinho) {
+      res.status(404).json({
+        msg: "Carrinho não encontrado",
+      });
+      return;
+    }
+
+    if (carrinho.itensCarrinho.length === 0) {
+      res.status(400).json({
+        msg: "Carrinho vazio",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      data: carrinho.itensCarrinho,
+      msg: "Carrinho encontrado com sucesso",
     });
-    return;
+  } catch (error) {
+    // Se ocorrer um erro, retorna uma resposta de erro adequada
+    // console.error("Erro ao obter o carrinho:", error);
+    res.status(500).json({
+      msg: error.message,
+    });
   }
-
-  res.status(200).json({
-    data: carrinho.itensCarrinho,
-    msg: "Carrinho encontrado com sucesso",
-  });
 };

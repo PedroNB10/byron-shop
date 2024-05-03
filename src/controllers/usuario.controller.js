@@ -26,14 +26,9 @@ export const getUsuarios = async (req, res) => {
 export const getDadosDoUsuario = async (req, res) => {
   let token;
   let usuarioId;
-  try {
-    token = req.headers.authorization.split(" ")[1];
-    usuarioId = jwtDecode(token).id;
-  } catch (err) {
-    return res.status(401).json({
-      msg: err.message,
-    });
-  }
+
+  token = req.headers.authorization.split(" ")[1];
+  usuarioId = jwtDecode(token).id;
 
   const usuario = await prisma.usuario.findUnique({
     where: { id: usuarioId },
