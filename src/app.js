@@ -1,12 +1,23 @@
 import express from "express";
 
 import swaggerUI from "swagger-ui-express";
-import swaggerDocs from "./swagger.json" assert { type: "json" };
+// import swaggerDocs from "./swagger.json" assert { type: "json" };
 
 import exampleRouter from "./routes/example.routes.js";
 import produtosRouter from "./routes/produtos.routes.js";
 import usuarioRouter from "./routes/usuario.routes.js";
 import carrinhoRouter from "./routes/carrinho.routes.js";
+import fs from "node:fs";
+let swaggerDocs = null;
+
+try {
+  const filePath = "src/swagger.json";
+  const data = fs.readFileSync(filePath, "utf8");
+  swaggerDocs = JSON.parse(data);
+  console.log(swaggerDocs);
+} catch (err) {
+  console.error("Error reading or parsing the JSON file:", err);
+}
 
 const app = express();
 const port = process.env.APP_PORT ?? 8080;
