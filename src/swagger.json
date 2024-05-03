@@ -225,6 +225,61 @@
       }
     },
 
+    "/usuarios/account": {
+      "get": {
+        "summary": "Obter informações do usuário",
+        "description": "Obtém informações do usuário logado",
+        "tags": ["Usuários"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Informações do usuário encontradas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "nome": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+
+                        "role": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": 1,
+                    "nome": "Nome do Usuário",
+                    "email": "email@email.com",
+                    "role": "USER"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/produtos": {
       "get": {
         "summary": "Listar Produtos",
