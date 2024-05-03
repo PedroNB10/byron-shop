@@ -8,6 +8,13 @@ export default function autorizarUsuario(req, res, next) {
       msg: "Você precisa estar logado para acessar esse recurso",
     });
   }
+  const tokenArray = authHeader.split(" ");
+
+  if (tokenArray.length !== 2) {
+    return res.status(401).json({
+      msg: "Token enviado não está no formato adequado",
+    });
+  }
 
   const token = authHeader.split(" ")[1]; // ['Bearer', 'token'][1] (transforma em um array)
 
