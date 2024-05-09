@@ -1,0 +1,1088 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de uma Lojinha",
+    "description": "API de uma Lojinha"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Servidor Local"
+    },
+    {
+      "url": "http://capacitacao.byronsolutions.com:3000/",
+      "description": "Servidor de Produção"
+    }
+  ],
+  "paths": {
+    "/usuarios": {
+      "post": {
+        "summary": "Criar usuário",
+        "description": "Cria um novo usuário",
+        "tags": ["Usuários"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "senha": {
+                    "type": "string",
+                    "minLength": 8
+                  },
+                  "nome": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "cpf": {
+                    "type": "string",
+                    "pattern": "^[0-9]{11}$"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": ["USER", "ADMIN"]
+                  }
+                },
+                "required": ["email", "senha", "nome", "cpf"]
+              },
+              "example": {
+                "email": "usuario@example.com",
+                "senha": "senha@123A",
+                "nome": "Nome do Usuário",
+                "cpf": "12345678901",
+                "role": "USER"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuário criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "usuarioId": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "nome": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      }
+                    },
+                    "token": {
+                      "type": "string"
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "usuarioId": 1,
+                    "nome": "Nome do Usuário",
+                    "email": "usuario@example.com"
+                  },
+                  "token": "token-super-aleatorio",
+                  "msg": "Usuário criado com sucesso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados obrigatórios não foram preenchidos, Email ou CPF já cadastrados, Email inválido, Senha inválida, ou CPF inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Dados obrigatórios não foram preenchidos, Email ou CPF já cadastrados, Email inválido, Senha inválida, ou CPF inválido"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usuarios/login": {
+      "post": {
+        "summary": "Logar Usuário no sistema",
+        "description": "Logar Usuário no sistema",
+        "tags": ["Usuários"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "senha": {
+                    "type": "string",
+                    "maxLength": 100
+                  }
+                },
+                "required": [
+                  "nome",
+                  "descricao",
+                  "preco",
+                  "quantidadeDisponivel",
+                  "categoria"
+                ]
+              },
+              "example": {
+                "email": "Pedro@admin.com",
+                "senha": "aabbCC@10"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["token", "msg"]
+                },
+                "example": {
+                  "token": "token-super-aleatorio",
+                  "msg": "Login realizado com sucesso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados obrigatórios não foram preenchidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Dados obrigatórios não foram preenchidos"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Login ou a senha estão incorretos, rota não autorizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Login ou a senha estão incorretos, rota não autorizada"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/usuarios/account": {
+      "get": {
+        "summary": "Obter informações do usuário",
+        "description": "Obtém informações do usuário logado",
+        "tags": ["Usuários"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Informações do usuário encontradas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "nome": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+
+                        "role": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": 1,
+                    "nome": "Nome do Usuário",
+                    "email": "email@email.com",
+                    "role": "USER"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/produtos": {
+      "get": {
+        "summary": "Listar Produtos",
+        "description": "Listar Produtos",
+        "tags": ["Produtos"],
+        "parameters": [
+          {
+            "name": "categoria",
+            "in": "query",
+            "description": "Filtrar por categoria",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nome",
+            "in": "query",
+            "description": "Filtrar por nome",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Produto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição Inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+
+      "post": {
+        "summary": "Criar Produto",
+        "description": "Criar um novo produto",
+        "tags": ["Produtos"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "descricao": {
+                    "type": "string",
+                    "maxLength": 4000
+                  },
+                  "preco": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "quantidadeDisponivel": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "categoria": {
+                    "type": "string",
+                    "maxLength": 50
+                  }
+                },
+                "required": [
+                  "nome",
+                  "descricao",
+                  "preco",
+                  "quantidadeDisponivel",
+                  "categoria"
+                ]
+              },
+              "example": {
+                "nome": "Produto Teste",
+                "descricao": "Descrição do Produto Teste",
+                "preco": 10.0,
+                "quantidadeDisponivel": 10,
+                "categoria": "Categoria Teste"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produto criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Produto"
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": 1,
+                    "nome": "Produto Teste",
+                    "descricao": "Descrição do Produto Teste",
+                    "preco": 10.0,
+                    "categoria": "Categoria Teste",
+                    "estoqueId": 1
+                  },
+                  "msg": "Produto criado com sucesso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados obrigatórios não foram preenchidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Dados obrigatórios não foram preenchidos"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Você não tem permissão para criar um produto, somente administradores podem criar produtos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Você não tem permissão para criar um produto, somente administradores podem criar produtos"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário Admin não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Usuário não encontrado"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/carrinho/adicionar/{produtoId}": {
+      "post": {
+        "summary": "Adiciona um produto ao carrinho do usuário",
+        "description": "Adiciona um produto ao carrinho do usuário",
+        "tags": ["Carrinho"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "produtoId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "ID do produto a ser adicionado ao carrinho"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto adicionado ao carrinho com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Produto adicionado ao carrinho com sucesso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos, id do produto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Parâmetros inválidos, id do produto não encontrado"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Você precisa estar logado para acessar esse recurso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Você precisa estar logado para acessar esse recurso"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado ou Produto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Usuário não encontrado ou Produto não encontrado"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/carrinho/remover/{produtoId}": {
+      "delete": {
+        "summary": "Remove um produto do carrinho do usuário",
+        "description": "Remove um produto específico do carrinho do usuário",
+        "tags": ["Carrinho"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "produtoId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "ID do produto a ser removido do carrinho"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto removido do carrinho com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Produto removido do carrinho com sucesso"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Você precisa estar logado para acessar esse recurso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Você precisa estar logado para acessar esse recurso"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado, Produto não encontrado, Não há carrinho aberto para este usuário, ou Produto não encontrado no carrinho",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Usuário não encontrado, Produto não encontrado, Não há carrinho aberto para este usuário, ou Produto não encontrado no carrinho"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/carrinho/finalizar": {
+      "post": {
+        "summary": "Finaliza a compra",
+        "description": "Finaliza o carrinho de compras do usuário, marcando-o como fechado",
+        "tags": ["Carrinho"],
+        "responses": {
+          "200": {
+            "description": "Compra finalizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Compra finalizada com sucesso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Carrinho vazio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Carrinho vazio"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Você precisa estar logado para acessar esse recurso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Você precisa estar logado para acessar esse recurso"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado ou Não há carrinho aberto para este usuário",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Usuário não encontrado ou Não há carrinho aberto para este usuário"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/carrinho": {
+      "get": {
+        "summary": "Obter carrinho por ID de usuário",
+        "description": "Obtém o carrinho de compras aberto do usuário atual",
+        "tags": ["Carrinho"],
+        "responses": {
+          "200": {
+            "description": "Carrinho encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "format": "int64"
+                      },
+                      "produto": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "format": "int64"
+                          },
+                          "nome": {
+                            "type": "string"
+                          },
+                          "descricao": {
+                            "type": "string"
+                          },
+                          "preco": {
+                            "type": "number",
+                            "format": "double"
+                          },
+                          "categoria": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "quantidade": {
+                        "type": "integer",
+                        "format": "int32"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "produto": {
+                        "id": 1,
+                        "nome": "Produto A",
+                        "descricao": "Descrição do Produto A",
+                        "preco": 10.0,
+                        "categoria": "Categoria A",
+                        "estoqueId": 1,
+                        "fotos": [
+                          {
+                            "id": 1,
+                            "url": "/public/default.jpg",
+                            "produtoId": 1
+                          }
+                        ]
+                      },
+                      "quantidade": 2
+                    },
+
+                    {
+                      "id": 2,
+                      "produto": {
+                        "id": 2,
+                        "nome": "Produto B",
+                        "descricao": "Descrição do Produto B",
+                        "preco": 20.0,
+                        "categoria": "Categoria B",
+                        "estoqueId": 2,
+                        "fotos": [
+                          {
+                            "id": 2,
+                            "url": "/public/default.jpg",
+                            "produtoId": 2
+                          }
+                        ]
+                      },
+                      "quantidade": 1
+                    }
+                  ],
+                  "msg": "Carrinho encontrado com sucesso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Carrinho vazio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Carrinho vazio"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Você precisa estar logado para acessar esse recurso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Você precisa estar logado para acessar esse recurso"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Carrinho não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "msg": "Carrinho não encontrado"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Usuario": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "senha": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "nome": {
+            "type": "string",
+            "maxLength": 70
+          },
+          "cpf": {
+            "type": "string",
+            "maxLength": 11
+          },
+          "carrinhos": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Carrinho" }
+          },
+          "role": {
+            "type": "string",
+            "maxLength": 20
+          }
+        },
+        "required": ["id", "email", "senha", "nome", "cpf", "role"]
+      },
+      "Estoque": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantidadeDisponivel": {
+            "type": "integer"
+          },
+          "produto": {
+            "$ref": "#/components/schemas/Produto"
+          }
+        },
+        "required": ["id", "quantidadeDisponivel"]
+      },
+      "Foto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "produtoId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": ["id", "url", "produtoId"]
+      },
+      "Carrinho": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fechadoEm": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "statusAberto": {
+            "type": "boolean"
+          },
+          "usuarioId": {
+            "type": "string"
+          },
+          "usuario": {
+            "$ref": "#/components/schemas/Usuario"
+          },
+          "itensCarrinho": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ItemCarrinho" }
+          }
+        },
+        "required": ["id", "statusAberto", "usuarioId"]
+      },
+      "Produto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nome": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "descricao": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "preco": {
+            "type": "number",
+            "format": "double"
+          },
+          "categoria": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "fotos": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Foto" }
+          },
+          "estoqueId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estoque": {
+            "$ref": "#/components/schemas/Estoque"
+          },
+          "itemCarrinho": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ItemCarrinho" }
+          }
+        },
+        "required": [
+          "id",
+          "nome",
+          "descricao",
+          "preco",
+          "categoria",
+          "estoqueId"
+        ]
+      },
+      "ItemCarrinho": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantidade": {
+            "type": "integer"
+          },
+          "produtoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "carrinhoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "carrinho": {
+            "$ref": "#/components/schemas/Carrinho"
+          },
+          "produto": {
+            "$ref": "#/components/schemas/Produto"
+          }
+        },
+        "required": ["id", "quantidade", "produtoId", "carrinhoId"]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

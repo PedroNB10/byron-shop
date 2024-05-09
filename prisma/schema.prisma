@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -14,27 +15,23 @@ datasource db {
 }
 
 model Usuario {
-  id    Int    @id @default(autoincrement())
-  email String @unique @db.VarChar(100)
-  senha String @db.VarChar(100)
-  nome  String @db.VarChar(70)
-  cpf   String @unique @db.VarChar(11)
+  id        String     @id @default(uuid())
+  email     String     @unique @db.VarChar(100)
+  senha     String     @db.VarChar(100)
+  nome      String     @db.VarChar(70)
+  cpf       String     @unique @db.VarChar(11)
+  carrinhos Carrinho[]
+  role      String     @default("USER") @db.VarChar(20)
 
   @@map("usuario")
 }
 
-model Produto {
-  id                   Int        @id @default(autoincrement())
-  nome                 String     @db.VarChar(100)
-  descricao            String     @db.VarChar(4000)
-  preco                Decimal    @db.Decimal(10, 2)
-  categoria            String     @db.VarChar(50)
-  quantidadeDisponivel Int        @map("quantidade_disponivel")
-  carrinhos            Carrinho[]
+model Estoque {
+  id                   Int      @id @unique @default(autoincrement())
+  quantidadeDisponivel Int      @map("quantidade_disponivel") @db.Int
+  produto              Produto?
 
-  fotos Foto[]
-
-  @@map("produto")
+  @@map("estoque")
 }
 
 model Foto {
@@ -47,11 +44,38 @@ model Foto {
 }
 
 model Carrinho {
-  id           Int       @id @default(autoincrement())
-  fechadoEm    DateTime  @map("fechado_em")
-  statusAberto Boolean   @map("status_aberto")
-  usuarioId    Int       @map("usuario_id")
-  produtos     Produto[]
+  id            Int            @id @default(autoincrement())
+  fechadoEm     DateTime?      @map("fechado_em")
+  statusAberto  Boolean        @map("status_aberto")
+  usuarioId     String         @map("usuario_id")
+  usuario       Usuario        @relation(fields: [usuarioId], references: [id])
+  itensCarrinho ItemCarrinho[]
 
   @@map("carrinho")
+}
+
+model Produto {
+  id           Int            @id @unique @default(autoincrement())
+  nome         String         @db.VarChar(100)
+  descricao    String         @db.VarChar(4000)
+  preco        Decimal        @db.Decimal(10, 2)
+  categoria    String         @db.VarChar(50)
+  fotos        Foto[]
+  estoqueId    Int            @unique @map("estoque_id")
+  estoque      Estoque        @relation(fields: [estoqueId], references: [id], onDelete: Cascade)
+  itemCarrinho ItemCarrinho[]
+
+  @@fulltext([nome, descricao, categoria]) // serve para fazer buscas full text search
+  @@map("produto")
+}
+
+model ItemCarrinho {
+  id         Int      @id @default(autoincrement())
+  quantidade Int
+  produtoId  Int      @map("produto_id")
+  carrinhoId Int      @map("carrinho_id")
+  carrinho   Carrinho @relation(fields: [carrinhoId], references: [id])
+  produto    Produto  @relation(fields: [produtoId], references: [id])
+
+  @@map("item_carrinho")
 }
