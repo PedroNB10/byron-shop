@@ -906,6 +906,101 @@
   },
   "components": {
     "schemas": {
+      "Usuario": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "senha": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "nome": {
+            "type": "string",
+            "maxLength": 70
+          },
+          "cpf": {
+            "type": "string",
+            "maxLength": 11
+          },
+          "carrinhos": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Carrinho" }
+          },
+          "role": {
+            "type": "string",
+            "maxLength": 20
+          }
+        },
+        "required": ["id", "email", "senha", "nome", "cpf", "role"]
+      },
+      "Estoque": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantidadeDisponivel": {
+            "type": "integer"
+          },
+          "produto": {
+            "$ref": "#/components/schemas/Produto"
+          }
+        },
+        "required": ["id", "quantidadeDisponivel"]
+      },
+      "Foto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "produtoId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": ["id", "url", "produtoId"]
+      },
+      "Carrinho": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fechadoEm": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "statusAberto": {
+            "type": "boolean"
+          },
+          "usuarioId": {
+            "type": "string"
+          },
+          "usuario": {
+            "$ref": "#/components/schemas/Usuario"
+          },
+          "itensCarrinho": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ItemCarrinho" }
+          }
+        },
+        "required": ["id", "statusAberto", "usuarioId"]
+      },
       "Produto": {
         "type": "object",
         "properties": {
@@ -929,9 +1024,20 @@
             "type": "string",
             "maxLength": 50
           },
+          "fotos": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Foto" }
+          },
           "estoqueId": {
             "type": "integer",
             "format": "int32"
+          },
+          "estoque": {
+            "$ref": "#/components/schemas/Estoque"
+          },
+          "itemCarrinho": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ItemCarrinho" }
           }
         },
         "required": [
@@ -942,6 +1048,33 @@
           "categoria",
           "estoqueId"
         ]
+      },
+      "ItemCarrinho": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantidade": {
+            "type": "integer"
+          },
+          "produtoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "carrinhoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "carrinho": {
+            "$ref": "#/components/schemas/Carrinho"
+          },
+          "produto": {
+            "$ref": "#/components/schemas/Produto"
+          }
+        },
+        "required": ["id", "quantidade", "produtoId", "carrinhoId"]
       }
     },
     "securitySchemes": {
